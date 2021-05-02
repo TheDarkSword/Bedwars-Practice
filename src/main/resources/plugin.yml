@@ -1,0 +1,13 @@
+name: BedwarsPractice
+version: 1.0.0
+author: TheDarkSword
+main: it.thedarksword.bedwarspractice.BedwarsPractice
+description: Just a BedwarsPractice Plugin
+softdepend: [Multiverse-Core]
+
+commands:
+  bedwarspractice:
+    aliases: [bp, bwp]
+    description: Just the main Command
+  bwtest:
+    description: Just a test Command

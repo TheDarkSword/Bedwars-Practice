@@ -1,0 +1,45 @@
+messages:
+  not-player: "&cYou are not a player"
+  insufficient-permission: "&cInsufficient permission"
+  invalid-command: "&cWrong command format"
+  invalid-place: "&cYou cant place block here"
+
+mysql:
+  host: 'localhost'
+  port: 3306
+  database: 'minecraft'
+  username: 'root'
+  password: ''
+  tables:
+    players: "bwp_players"
+    records: "bwp_records"
+    types: "bwp_types"
+
+block:
+  material: WOOL
+  can-placed: SAND
+
+settings:
+  material: "REDSTONE_COMPARATOR"
+  name: "&2Settings"
+  lore:
+    - "&9Custom Lore"
+
+mode:
+  material: "NETHER_STAR"
+  name: "&bMode"
+  lore:
+    - "&aCustom Lore"
+
+game:
+  min-y: 62.5
+  finish-y: 3 #The number subtracted at the max height (Max Height - Ground Y)
+  win:
+    title:
+      message: "&a{time} secondi"
+      fadeIn: 5
+      duration: 60
+      fadeOut: 20
+    message: "&aCompletato! Ci hai messo {time} secondi, con una velocità massima {peekSpeed} m/s"
+  loose:
+    message: "&cHai fallito! La velocità massima raggiunta è {peekSpeed} m/s"
