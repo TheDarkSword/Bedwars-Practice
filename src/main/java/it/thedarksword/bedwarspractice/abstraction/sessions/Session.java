@@ -1,7 +1,6 @@
 package it.thedarksword.bedwarspractice.abstraction.sessions;
 
 import it.thedarksword.bedwarspractice.abstraction.interfacing.sessions.TrainingSession;
-import it.thedarksword.bedwarspractice.clipboards.Cuboid;
 import it.thedarksword.bedwarspractice.clipboards.Region;
 import it.thedarksword.bedwarspractice.inventories.SettingsInventory;
 import it.thedarksword.bedwarspractice.utils.location.FakeBlock;

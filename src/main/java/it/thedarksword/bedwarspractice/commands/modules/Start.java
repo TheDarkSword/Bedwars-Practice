@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import it.thedarksword.bedwarspractice.bridging.sessions.straight.none.ShortStraightBridging;
+import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
 import it.thedarksword.bedwarspractice.commands.Module;
 import lombok.SneakyThrows;
 import org.bukkit.command.CommandSender;
@@ -21,16 +22,28 @@ public class Start extends Module {
     @SneakyThrows
     @Override
     public void execute(Player player, String[] args) {
-        if(player.hasMetadata("session")) {
+        /*if(player.hasMetadata("session")) {
             //Bridging.STRAIGHT.endSession(player);
             bedwarsPractice.getManager().endSession(player);
             player.removeMetadata("session", bedwarsPractice);
             return;
-        }
+        }*/
 
-        BridgingSession session = new ShortStraightBridging(bedwarsPractice);
-        player.setMetadata("session", new FixedMetadataValue(bedwarsPractice, session.getType().name()));
-        bedwarsPractice.getManager().newSession(player, session);
+        if(args.length < 2) {
+            BridgingSession session = new ShortStraightBridging(bedwarsPractice);
+            player.setMetadata("session", new FixedMetadataValue(bedwarsPractice, session.getType().name()));
+            bedwarsPractice.getManager().newSession(player, session);
+        } else {
+            if(args[1].equalsIgnoreCase("bridging")) {
+                BridgingSession session = new ShortStraightBridging(bedwarsPractice);
+                player.setMetadata("session", new FixedMetadataValue(bedwarsPractice, session.getType().name()));
+                bedwarsPractice.getManager().newSession(player, session);
+            } else if(args[1].equalsIgnoreCase("knockbackclutch")) {
+                KnockbackClutch session = new KnockbackClutch(bedwarsPractice, player);
+                player.setMetadata("session", new FixedMetadataValue(bedwarsPractice, session.getType().name()));
+                bedwarsPractice.getManager().newSession(player, session);
+            }
+        }
         //BridgingSession session = Bridging.STRAIGHT.newSession(player);
         //player.setMetadata("bridging", new FixedMetadataValue(bedwarsPractice, session.getType().getName()));
         /*if(bedwarsPractice.getPractice().getPlayers().containsKey(player.getName())) {
@@ -60,6 +73,6 @@ public class Start extends Module {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        return ImmutableList.of();
+        return ImmutableList.of("bridging", "knockbackclutch");
     }
 }

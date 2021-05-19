@@ -30,19 +30,6 @@ public class BridgingListener implements Listener {
     }
 
     @EventHandler
-    public void onSettings(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        Optional<Session> optional = bedwarsPractice.getManager().session(player);
-        if(player.getItemInHand() != null && optional.isPresent()){
-            if(player.getItemInHand().getType() == bedwarsPractice.getConfigValue().SETTINGS_MATERIAL) {
-                optional.get().getSettingsInventory().open(player);
-            } else if(player.getItemInHand().getType() == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
-                optional.get().getModeInventory().open(player);
-            }
-        }
-    }
-
-    @EventHandler
     public void inventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
 
@@ -56,7 +43,8 @@ public class BridgingListener implements Listener {
                 optional.isPresent()) {
             Session session = optional.get();
 
-            if(event.getInventory().equals(session.getSettingsInventory().getInventory())) {
+            if(session instanceof BridgingSession &&
+                    event.getInventory().equals(session.getSettingsInventory().getInventory())) {
                 session.getSettingsInventory().getItems().get(event.getSlot()).run(event);
             }
         }
@@ -107,22 +95,10 @@ public class BridgingListener implements Listener {
 
     @EventHandler
     public void entityDamageEvent(EntityDamageEvent event) {
-        if (event.getCause() != EntityDamageEvent.DamageCause.VOID || !(event.getEntity() instanceof Player))
-            return;
+        if(!(event.getEntity() instanceof Player)) return;
+        if (event.getCause() != EntityDamageEvent.DamageCause.VOID) return;
 
         event.setCancelled(true);
-        event.getEntity().teleport(bedwarsPractice.getSpawn());
-    }
-
-    @SneakyThrows
-    @EventHandler
-    public void onJoin(AsyncPlayerPreLoginEvent event) {
-        bedwarsPractice.getMySQLManager().savePlayer(event.getUniqueId().toString(), event.getName());
-    }
-
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
-        event.getPlayer().removeMetadata("session", bedwarsPractice);
-        bedwarsPractice.getManager().endSession(event.getPlayer());
+        bedwarsPractice.getManager().session((Player) event.getEntity()).ifPresent(session -> event.getEntity().teleport(session.getSpawn()));
     }
 }

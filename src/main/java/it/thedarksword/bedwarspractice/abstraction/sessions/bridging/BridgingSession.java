@@ -20,11 +20,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.NumberConversions;
 
 import java.util.*;
 
@@ -46,8 +43,6 @@ public abstract class BridgingSession extends Session {
         this(configuration, bedwarsPractice, null);
     }
 
-    //TODO: Make controls to check if he is placing blocks behind the finish area or behind the start area
-
     public BridgingSession(BridgingConfiguration configuration, BedwarsPractice bedwarsPractice, BridgingSettingsInventory inventory) {
         super(SessionType.BRIDGING);
         this.configuration = configuration;
@@ -60,7 +55,7 @@ public abstract class BridgingSession extends Session {
             return;
         }
         Schematic schematic = bedwarsPractice.getSchematic();
-        Location location = bedwarsPractice.getSchematicSpawn().cloneLocation();
+        Location location = bedwarsPractice.getSpawns().getBridging().getSchematicSpawn().cloneLocation();
         int startX;
         if(configuration.getDirection() == BridgingConfiguration.BridgeDirection.FORWARD) {
             startX = configuration.getLength().getXForward();
@@ -90,6 +85,9 @@ public abstract class BridgingSession extends Session {
 
         player.getInventory().setItem(7, bedwarsPractice.getConstantObjects().getSettings());
         player.getInventory().setItem(8, bedwarsPractice.getConstantObjects().getMode());
+
+        bedwarsPractice.getServer().getScheduler().runTaskLater(bedwarsPractice, () ->
+                player.openInventory(bedwarsPractice.getInventories().getBridgingSpawnInventory().getInventory()), 1);
     }
 
     public double getMovementSpeed() {
@@ -146,8 +144,7 @@ public abstract class BridgingSession extends Session {
             if (hand.getType() == bedwarsPractice.getConfigValue().SETTINGS_MATERIAL) {
                 getSettingsInventory().open(player);
             } else if (hand.getType() == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
-                //TODO: Open Mode Inventory
-                //getModeInventory().open(player);
+                bedwarsPractice.getInventories().getModeInventory().open(player);
             }
             return null;
         }
@@ -160,8 +157,7 @@ public abstract class BridgingSession extends Session {
             player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
             return null;
         } else if(hand.getType() == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
-            //TODO: Open Mode Inventory
-            //getModeInventory().open(player);
+            bedwarsPractice.getInventories().getModeInventory().open(player);
             player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
             return null;
         }
@@ -190,8 +186,8 @@ public abstract class BridgingSession extends Session {
         }
 
         Material fromBlock = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).getType();
-        if(fromBlock != bedwarsPractice.getConfigValue().CAN_PLACED || fromBlock != Material.AIR ||
-                fakeBlock.getX() <= bedwarsPractice.getSpawn().getX() || fakeBlock.getX() >= getFinishArea().lastX()) {
+        if((fromBlock != bedwarsPractice.getConfigValue().CAN_PLACED && fromBlock != Material.AIR) ||
+                fakeBlock.getX() <= getSpawn().getX() || fakeBlock.getX() >= getFinishArea().lastX()) {
             player.sendMessage(bedwarsPractice.getConfigValue().INVALID_PLACE);
             player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
             player.setItemInHand(hand);
@@ -217,24 +213,26 @@ public abstract class BridgingSession extends Session {
     @Override
     public void pasteSchematic(Player player, Schematic schematic, Location location) {
         if(configuration.getLength() == BridgingConfiguration.BridgeLength.INFINITE) return;
-        int startX;
-        if(configuration.getDirection() == BridgingConfiguration.BridgeDirection.FORWARD) {
-            startX = configuration.getLength().getXForward();
-        } else {
-            startX = configuration.getLength().getXDiagonal();
-        }
-        location.add(startX, configuration.getHeight().getY(), configuration.getDirection().getZ());
-        for (int x = 0; x < schematic.getWidth(); ++x) {
-            for (int y = 0; y < schematic.getHeight(); ++y) {
-                for (int z = 0; z < schematic.getLength(); ++z) {
-                    int index = y * schematic.getWidth() * schematic.getLength() + z * schematic.getWidth() + x;
-                    player.sendBlockChange(new Location(player.getWorld(), x + location.getX(), y + location.getY(), z + location.getZ()),
-                            schematic.getBlocks()[index], schematic.getData()[index]);
-                    setSchematicBlock(new FakeBlock(Material.getMaterial(schematic.getBlocks()[index]), player.getWorld(),
-                            x + location.getBlockX(), y + location.getBlockY(), z + location.getBlockZ(), -1));
+        bedwarsPractice.getServer().getScheduler().runTaskLaterAsynchronously(bedwarsPractice, () -> {
+            int startX;
+            if(configuration.getDirection() == BridgingConfiguration.BridgeDirection.FORWARD) {
+                startX = configuration.getLength().getXForward();
+            } else {
+                startX = configuration.getLength().getXDiagonal();
+            }
+            location.add(startX, configuration.getHeight().getY(), configuration.getDirection().getZ());
+            for (int x = 0; x < schematic.getWidth(); ++x) {
+                for (int y = 0; y < schematic.getHeight(); ++y) {
+                    for (int z = 0; z < schematic.getLength(); ++z) {
+                        int index = y * schematic.getWidth() * schematic.getLength() + z * schematic.getWidth() + x;
+                        player.sendBlockChange(new Location(player.getWorld(), x + location.getX(), y + location.getY(), z + location.getZ()),
+                                schematic.getBlocks()[index], schematic.getData()[index]);
+                        setSchematicBlock(new FakeBlock(Material.getMaterial(schematic.getBlocks()[index]), player.getWorld(),
+                                x + location.getBlockX(), y + location.getBlockY(), z + location.getBlockZ(), -1));
+                    }
                 }
             }
-        }
+        }, 20);
     }
 
     @SuppressWarnings("deprecation")
@@ -280,7 +278,7 @@ public abstract class BridgingSession extends Session {
     @SneakyThrows
     @Override
     public void win(Player player) {
-        player.teleport(bedwarsPractice.getSpawn());
+        player.teleport(getSpawn());
 
         float time = (System.currentTimeMillis() - getSessionStart())/1000f;
         String timeFormatted = Format.decimal3(time);
@@ -303,7 +301,7 @@ public abstract class BridgingSession extends Session {
 
     @Override
     public void loose(Player player) {
-        player.teleport(bedwarsPractice.getSpawn());
+        player.teleport(getSpawn());
 
         player.sendMessage(bedwarsPractice.getConfigValue().LOOSE_MESSAGE.replace("{peekSpeed}", Format.decimal3(peekSpeed)));
         setRunning(false);
@@ -341,5 +339,10 @@ public abstract class BridgingSession extends Session {
         list.add("Modalità: §7" + getType().name());
         list.add("    ");
         list.add(ChatColor.YELLOW + "play.coralmc.it");
+    }
+
+    @Override
+    public Location getSpawn() {
+        return bedwarsPractice.getSpawns().getBridging().getSpawn();
     }
 }

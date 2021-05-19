@@ -29,5 +29,5 @@ public interface TrainingSession extends SidebarTemplate {
     void pasteSchematic(Player player, Schematic schematic, Location location);
     void clearSchematic(Player player);
 
-    int getAttempts();
+    Location getSpawn();
 }
