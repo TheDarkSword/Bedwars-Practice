@@ -1,28 +1,28 @@
 package it.thedarksword.bedwarspractice;
 
 import it.thedarksword.bedwarspractice.clipboards.Schematic;
+import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
 import it.thedarksword.bedwarspractice.commands.BedwarsPracticeCommand;
 import it.thedarksword.bedwarspractice.commands.BwTest;
 import it.thedarksword.bedwarspractice.config.ConfigValue;
 import it.thedarksword.bedwarspractice.enchantment.GlowEnchant;
+import it.thedarksword.bedwarspractice.inventories.BridgingSpawnInventory;
+import it.thedarksword.bedwarspractice.inventories.ModeInventory;
 import it.thedarksword.bedwarspractice.listeners.BridgingListener;
+import it.thedarksword.bedwarspractice.listeners.ClutchListener;
 import it.thedarksword.bedwarspractice.listeners.NatureListener;
 import it.thedarksword.bedwarspractice.manager.ConstantObjects;
+import it.thedarksword.bedwarspractice.manager.Inventories;
 import it.thedarksword.bedwarspractice.manager.Manager;
+import it.thedarksword.bedwarspractice.manager.Spawns;
 import it.thedarksword.bedwarspractice.mysql.MySQL;
 import it.thedarksword.bedwarspractice.mysql.MySQLManager;
 import it.thedarksword.bedwarspractice.packets.PacketListener;
 import it.thedarksword.bedwarspractice.scoreboard.BoardsHandler;
 import it.thedarksword.bedwarspractice.scoreboard.NMS;
-import it.thedarksword.bedwarspractice.utils.Title;
-import it.thedarksword.bedwarspractice.utils.location.CloneableLocation;
 import it.thedarksword.bedwarspractice.yaml.Configuration;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -46,9 +46,12 @@ public class BedwarsPractice extends JavaPlugin {
 
     private BoardsHandler boardsHandler;
 
-    @Setter private Location spawn;
-    @Setter private CloneableLocation schematicSpawn;
     private Schematic schematic;
+
+    private KnockbackClutch.KnockbackClutchTask knockbackClutchTask;
+
+    private Spawns spawns;
+    private Inventories inventories;
 
     @SneakyThrows
     @Override
@@ -86,27 +89,8 @@ public class BedwarsPractice extends JavaPlugin {
 
         packetListener = new PacketListener(this);
 
-        if(!settings.getString("spawn.world").isEmpty()) {
-            spawn = new Location(
-                    Bukkit.getWorld(settings.getString("spawn.world")),
-                    settings.getInt("spawn.x"),
-                    settings.getInt("spawn.y"),
-                    settings.getInt("spawn.z"),
-                    settings.getFloat("spawn.yaw"),
-                    settings.getFloat("spawn.pitch")
-            );
-        }
-
-        if(!settings.getString("schematic.world").isEmpty()) {
-            schematicSpawn = new CloneableLocation(new Location(
-                    Bukkit.getWorld(settings.getString("schematic.world")),
-                    settings.getInt("schematic.x"),
-                    settings.getInt("schematic.y"),
-                    settings.getInt("schematic.z"),
-                    settings.getFloat("schematic.yaw"),
-                    settings.getFloat("schematic.pitch")
-            ));
-        }
+        spawns = new Spawns(settings);
+        inventories = new Inventories();
 
         schematic = Schematic.loadSchematic(schematicFile);
 
@@ -114,6 +98,9 @@ public class BedwarsPractice extends JavaPlugin {
         constantObjects = new ConstantObjects(this);
 
         boardsHandler = new BoardsHandler(this);
+
+        knockbackClutchTask = new KnockbackClutch.KnockbackClutchTask();
+        knockbackClutchTask.runTaskTimerAsynchronously(this, 2, 2);
 
         registerCommands();
         registerListeners();
@@ -133,6 +120,7 @@ public class BedwarsPractice extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BridgingListener(this), this);
         getServer().getPluginManager().registerEvents(new NatureListener(this), this);
         getServer().getPluginManager().registerEvents(new BoardsHandler.BoardsListener(boardsHandler), this);
+        getServer().getPluginManager().registerEvents(new ClutchListener(this), this);
     }
 
     public void sendMessage(CommandSender sender, String message){

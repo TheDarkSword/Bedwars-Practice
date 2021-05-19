@@ -31,8 +31,24 @@ mode:
   lore:
     - "&aCustom Lore"
 
-game:
+checkpoint:
+  enabled:
+    material: "INK_SACK"
+    color: LIME
+    name: "&7Checkpoint &aEnabled"
+    lore:
+      - "&aCustom Lore"
+  disabled:
+    material: "INK_SACK"
+    color: GRAY
+    name: "&7Checkpoint &cDisabled"
+    lore:
+      - "&aCustom Lore"
+
+games:
   min-y: 62.5
+
+bridging:
   finish-y: 3 #The number subtracted at the max height (Max Height - Ground Y)
   win:
     title:
@@ -43,3 +59,10 @@ game:
     message: "&aCompletato! Ci hai messo {time} secondi, con una velocità massima {peekSpeed} m/s"
   loose:
     message: "&cHai fallito! La velocità massima raggiunta è {peekSpeed} m/s"
+
+clutch:
+  knockback:
+    delay: 2000 #milliseconds
+    materials:
+      start: IRON_BLOCK
+      checkpoint: DIAMOND_BLOCK

@@ -30,7 +30,7 @@ public class SetSchematicSpawn extends Module {
         bedwarsPractice.getSettings().set("schematic.pitch", location.getPitch());
 
         bedwarsPractice.getSettings().save();
-        bedwarsPractice.setSchematicSpawn(new CloneableLocation(location));
+        bedwarsPractice.getSpawns().getBridging().setSchematicSpawn(new CloneableLocation(location));
         //bedwarsPractice.getPractice().setSpawn(location);
         player.sendMessage("Schematic Spawn Set");
     }

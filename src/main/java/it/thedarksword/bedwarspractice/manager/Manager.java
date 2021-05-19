@@ -2,6 +2,7 @@ package it.thedarksword.bedwarspractice.manager;
 
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
+import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -43,11 +44,11 @@ public class Manager {
     }
 
     private void switchSession(Player player, Session oldSession, Session newSession) {
-        if(oldSession.isRunning()) player.teleport(bedwarsPractice.getSpawn());
+        if(oldSession.isRunning()) player.teleport(oldSession.getSpawn());
         oldSession.clearSchematic(player);
         oldSession.stop(player);
         sessions.put(player.getEntityId(), newSession);
-        newSession.pasteSchematic(player, bedwarsPractice.getSchematic(), bedwarsPractice.getSchematicSpawn().cloneLocation());
+        //newSession.pasteSchematic(player, bedwarsPractice.getSchematic(), bedwarsPractice.getSpawns().getBridging().getSchematicSpawn().cloneLocation());
         newSession.load(player);
     }
 
@@ -57,18 +58,21 @@ public class Manager {
         if(sessions.containsKey(player.getEntityId())) {
             Session oldSession = sessions.get(player.getEntityId());
             if(oldSession.getClass().equals(session.getClass())) return;
-            switchSession(player, oldSession, session);
-            return;
+            if(oldSession.getClass().getSuperclass().equals(session.getClass().getSuperclass())) {
+                switchSession(player, oldSession, session);
+                return;
+            }
         }
+        player.getInventory().clear();
         session.load(player);
         session.init(player);
-        player.teleport(bedwarsPractice.getSpawn());
+        player.teleport(session.getSpawn());
         for(Player other : Bukkit.getOnlinePlayers()) {
             player.hidePlayer(other);
         }
         sessions.put(player.getEntityId(), session);
         bedwarsPractice.getPacketListener().addPlayer(player);
-        session.pasteSchematic(player, bedwarsPractice.getSchematic(), bedwarsPractice.getSchematicSpawn().cloneLocation());
+        //session.pasteSchematic(player, bedwarsPractice.getSchematic(), bedwarsPractice.getSpawns().getBridging().getSchematicSpawn().cloneLocation());
     }
 
     public Optional<Session> session(Player player) {

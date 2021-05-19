@@ -2,10 +2,7 @@ package it.thedarksword.bedwarspractice.commands;
 
 import com.google.common.collect.ImmutableList;
 import it.thedarksword.bedwarspractice.BedwarsPractice;
-import it.thedarksword.bedwarspractice.commands.modules.RegisterType;
-import it.thedarksword.bedwarspractice.commands.modules.SetSchematicSpawn;
-import it.thedarksword.bedwarspractice.commands.modules.SetSpawn;
-import it.thedarksword.bedwarspractice.commands.modules.Start;
+import it.thedarksword.bedwarspractice.commands.modules.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,6 +22,9 @@ public class BedwarsPracticeCommand implements CommandExecutor, TabCompleter {
         Module.registerModule(new SetSchematicSpawn(bedwarsPractice));
         Module.registerModule(new Start(bedwarsPractice));
         Module.registerModule(new RegisterType(bedwarsPractice));
+        Module.registerModule(new SetFinish(bedwarsPractice));
+        Module.registerModule(new Menu(bedwarsPractice));
+        Module.registerModule(new Stop(bedwarsPractice));
     }
 
     @Override

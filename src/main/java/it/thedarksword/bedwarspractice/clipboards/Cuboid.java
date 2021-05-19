@@ -11,6 +11,10 @@ public class Cuboid implements Region {
     private final double maxY;
     private final double maxZ;
 
+    public Cuboid(Location location1, Location location2) {
+        this(location1.getX(), location1.getY(), location1.getZ(), location2.getX(), location2.getY(), location2.getZ());
+    }
+
     public Cuboid(double x1, double y1, double z1, double x2, double y2, double z2) {
         if(x1 < x2){
             minX = x1;

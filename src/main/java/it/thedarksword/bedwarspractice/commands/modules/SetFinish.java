@@ -10,10 +10,10 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class SetSpawn extends Module {
+public class SetFinish extends Module {
 
-    public SetSpawn(BedwarsPractice bedwarsPractice) {
-        super(bedwarsPractice, "setspawn", "bwp.admin", "ss");
+    public SetFinish(BedwarsPractice bedwarsPractice) {
+        super(bedwarsPractice, "setfinish", "bwp.admin", "sf");
     }
 
     @SneakyThrows
@@ -21,14 +21,15 @@ public class SetSpawn extends Module {
     public void execute(Player player, String[] args) {
         Location location = player.getLocation();
 
-        if(args.length < 2) {
+        if(args.length < 3) {
             player.sendMessage(bedwarsPractice.getConfigValue().INVALID_COMMAND);
             return;
         }
 
         String mode = args[1].toLowerCase();
-        if(bedwarsPractice.getSpawns().setSpawnByMode(mode, location)){
-            player.sendMessage("Spawn Set");
+        boolean first = args[2].equals("1");
+        if(bedwarsPractice.getSpawns().setFinishByMode(mode, location, first)){
+            player.sendMessage("Finish Set (" + args[2] + ")");
         } else {
             player.sendMessage("Invalid Mode");
         }
@@ -37,6 +38,6 @@ public class SetSpawn extends Module {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        return ImmutableList.of("bridging", "clutchKnockback");
+        return ImmutableList.of("clutchKnockback 1", "clutchKnockback 2");
     }
 }
