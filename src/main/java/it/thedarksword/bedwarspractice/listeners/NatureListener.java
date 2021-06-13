@@ -2,23 +2,30 @@ package it.thedarksword.bedwarspractice.listeners;
 
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
+import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import it.thedarksword.bedwarspractice.abstraction.sessions.clutch.ClutchSession;
+import it.thedarksword.bedwarspractice.bridging.sessions.straight.none.ShortStraightBridging;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Optional;
 
@@ -39,7 +46,7 @@ public class NatureListener implements Listener {
             if(handType == bedwarsPractice.getConfigValue().SETTINGS_MATERIAL) {
                 optional.get().getSettingsInventory().open(player);
             } else if(handType == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
-                optional.get().getModeInventory().open(player);
+                bedwarsPractice.getInventories().getModeInventory().open(player);
             } else if(handType == bedwarsPractice.getConfigValue().CHECKPOINT_ENABLED_MATERIAL) {
                 if(hand.getData().getData() == bedwarsPractice.getConfigValue().CHECKPOINT_ENABLED_COLOR.getDyeData()) {
                     player.setItemInHand(bedwarsPractice.getConstantObjects().getCheckpointDisabled());
@@ -65,9 +72,17 @@ public class NatureListener implements Listener {
 
         if(event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
             if(event.getInventory().equals(bedwarsPractice.getInventories().getModeInventory().getInventory())) {
-                bedwarsPractice.getInventories().getModeInventory().getItems().get(event.getSlot()).run(event);
+                //bedwarsPractice.getInventories().getModeInventory().getItems().get(event.getSlot()).run(event);
+                bedwarsPractice.getInventories().getModeInventory().getItems().computeIfPresent(event.getSlot(),(integer, clickableItem) -> {
+                    clickableItem.run(event);
+                    return clickableItem;
+                });
             } else if(event.getInventory().equals(bedwarsPractice.getInventories().getBridgingSpawnInventory().getInventory())) {
-                bedwarsPractice.getInventories().getBridgingSpawnInventory().getItems().get(event.getSlot()).run(event);
+                //bedwarsPractice.getInventories().getBridgingSpawnInventory().getItems().get(event.getSlot()).run(event);
+                bedwarsPractice.getInventories().getBridgingSpawnInventory().getItems().computeIfPresent(event.getSlot(), ((integer, clickableItem) -> {
+                    clickableItem.run(event);
+                    return clickableItem;
+                }));
             }
         }
     }
@@ -78,8 +93,9 @@ public class NatureListener implements Listener {
                 event.getInventory().equals(bedwarsPractice.getInventories().getBridgingSpawnInventory().getInventory())) {
             Player player = (Player) event.getPlayer();
             bedwarsPractice.getManager().session(player).ifPresent(session ->
+                    bedwarsPractice.getServer().getScheduler().runTaskLater(bedwarsPractice, () ->
                     session.pasteSchematic(player, bedwarsPractice.getSchematic(),
-                            bedwarsPractice.getSpawns().getBridging().getSchematicSpawn().cloneLocation()));
+                    bedwarsPractice.getSpawns().getBridging().getSchematicSpawn().cloneLocation()), 20));
         }
     }
 
@@ -111,15 +127,41 @@ public class NatureListener implements Listener {
         event.setCancelled(true);
     }
 
+    @EventHandler
+    public void onBreak(BlockBreakEvent event) {
+        if(!event.getPlayer().hasPermission("bwp.admin") || bedwarsPractice.getManager().session(event.getPlayer()).isPresent()) {
+            event.setCancelled(true);
+        }
+    }
+
     @SneakyThrows
     @EventHandler
-    public void onJoin(AsyncPlayerPreLoginEvent event) {
+    public void onPreJoin(AsyncPlayerPreLoginEvent event) {
         bedwarsPractice.getMySQLManager().savePlayer(event.getUniqueId().toString(), event.getName());
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        for(Player other : Bukkit.getOnlinePlayers()) {
+            player.hidePlayer(other);
+            other.hidePlayer(player);
+        }
+        BridgingSession session = new ShortStraightBridging(bedwarsPractice);
+        player.setMetadata("session", new FixedMetadataValue(bedwarsPractice, session.getType().name()));
+        bedwarsPractice.getManager().newSession(player, session);
+        event.setJoinMessage("");
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         event.getPlayer().removeMetadata("session", bedwarsPractice);
         bedwarsPractice.getManager().endSession(event.getPlayer());
+        event.setQuitMessage("");
+    }
+
+    @EventHandler (priority = EventPriority.HIGHEST)
+    public void onChat(AsyncPlayerChatEvent event) {
+        event.setFormat(ChatColor.GRAY + "%s " + ChatColor.DARK_GRAY + "» " + ChatColor.GRAY + "%s");
     }
 }

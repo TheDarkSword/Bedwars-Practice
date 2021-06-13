@@ -55,17 +55,23 @@ public class ConfigValue {
 
     //Bridging
     public final float FINISH_Y;
-    public final String WIN_TITLE;
-    public final int fadeIn;
-    public final int duration;
-    public final int fadeOut;
-    public final String WIN_MESSAGE;
-    public final String LOOSE_MESSAGE;
+    public final String B_WIN_TITLE;
+    public final int B_fadeIn;
+    public final int B_duration;
+    public final int B_fadeOut;
+    public final String B_WIN_MESSAGE;
+    public final String B_LOOSE_MESSAGE;
 
     //Clutch Knockback
     public final int KNOCKBACK_DELAY;
     public final Material KNOCKBACK_START;
     public final Material KNOCKBACK_CHECKPOINT;
+    public final String KBC_WIN_TITLE;
+    public final int KBC_fadeIn;
+    public final int KBC_duration;
+    public final int KBC_fadeOut;
+    public final String KBC_WIN_MESSAGE;
+    public final String KBC_LOOSE_MESSAGE;
 
     public ConfigValue(Configuration configuration) {
         this.configuration = configuration;
@@ -106,16 +112,22 @@ public class ConfigValue {
         MIN_Y = configuration.getFloat("games.min-y");
 
         FINISH_Y = configuration.getFloat("bridging.finish-y");
-        WIN_TITLE = getTranslated(configuration.getString("bridging.win.title.message"));
-        fadeIn = configuration.getInt("bridging.win.title.fadeIn");
-        duration = configuration.getInt("bridging.win.title.duration");
-        fadeOut = configuration.getInt("bridging.win.title.fadeOut");
-        WIN_MESSAGE = getTranslated(configuration.getString("bridging.win.message"));
-        LOOSE_MESSAGE = getTranslated(configuration.getString("bridging.loose.message"));
+        B_WIN_TITLE = getTranslated(configuration.getString("bridging.win.title.message"));
+        B_fadeIn = configuration.getInt("bridging.win.title.fadeIn");
+        B_duration = configuration.getInt("bridging.win.title.duration");
+        B_fadeOut = configuration.getInt("bridging.win.title.fadeOut");
+        B_WIN_MESSAGE = getTranslated(configuration.getString("bridging.win.message"));
+        B_LOOSE_MESSAGE = getTranslated(configuration.getString("bridging.loose.message"));
 
         KNOCKBACK_DELAY = configuration.getInt("clutch.knockback.delay");
         KNOCKBACK_START = Material.getMaterial(configuration.getString("clutch.knockback.materials.start"));
         KNOCKBACK_CHECKPOINT = Material.getMaterial(configuration.getString("clutch.knockback.materials.checkpoint"));
+        KBC_WIN_TITLE = getTranslated(configuration.getString("clutch.knockback.win.title.message"));
+        KBC_fadeIn = configuration.getInt("clutch.knockback.win.title.fadeIn");
+        KBC_duration = configuration.getInt("clutch.knockback.win.title.duration");
+        KBC_fadeOut = configuration.getInt("clutch.knockback.win.title.fadeOut");
+        KBC_WIN_MESSAGE = getTranslated(configuration.getString("clutch.knockback.win.message"));
+        KBC_LOOSE_MESSAGE = getTranslated(configuration.getString("clutch.knockback.loose.message"));
 
     }
 

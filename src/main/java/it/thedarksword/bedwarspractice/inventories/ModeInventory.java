@@ -23,16 +23,20 @@ public class ModeInventory {
 
     //TODO: Get From Config
     public ModeInventory() {
-        inventory = Bukkit.createInventory(null, 9, "Modalità");
+        inventory = Bukkit.createInventory(null, 36, "Modalità");
 
-        inventory.setItem(2, createItem(2, Material.BED, 1, ChatColor.GREEN + "Bridging", event -> {
+        inventory.setItem(11, createItem(11, Material.BED, 1, ChatColor.GREEN + "Bridging", event -> {
             Player player = (Player) event.getWhoClicked();
             player.performCommand("bwp start bridging");
         }));
 
-        inventory.setItem(6, createItem(6, Material.WOOD_SWORD, 1, ChatColor.GREEN + "Knockback Clutch", event -> {
+        inventory.setItem(15, createItem(15, Material.WOOD_SWORD, 1, ChatColor.GREEN + "Knockback Clutch", event -> {
             Player player = (Player) event.getWhoClicked();
             player.performCommand("bwp start knockbackclutch");
+        }));
+
+        inventory.setItem(31, createItem(31, Material.BARRIER, 1, ChatColor.RED + "Chiudi", event -> {
+            event.getWhoClicked().closeInventory();
         }));
     }
 

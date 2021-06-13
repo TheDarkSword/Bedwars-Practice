@@ -17,24 +17,24 @@ public class PacketListener extends PacketInjector {
 
     @Override
     public Object onPacketInAsync(Player player, Channel channel, Object obj) {
+
         /*if (obj instanceof PacketPlayInArmAnimation && player.hasMetadata("session")) {
             return null;
         }*/
 
         if (obj instanceof PacketPlayInBlockPlace && player.hasMetadata("session")) {
             Optional<Session> optional = bedwarsPractice.getManager().session(player);
-            if(!optional.isPresent()) return obj;
+            if (!optional.isPresent()) return obj;
             Session session = optional.get();
             return session.handlePlace(bedwarsPractice, player, (PacketPlayInBlockPlace) obj);
         }
 
-        if (obj instanceof PacketPlayInBlockDig && player.hasMetadata("session")){
+        if (obj instanceof PacketPlayInBlockDig && player.hasMetadata("session")) {
             Optional<Session> optional = bedwarsPractice.getManager().session(player);
-            if(!optional.isPresent()) return obj;
+            if (!optional.isPresent()) return obj;
             Session session = optional.get();
             return session.handleBreak(bedwarsPractice, player, (PacketPlayInBlockDig) obj);
         }
-
         return obj;
     }
 

@@ -11,6 +11,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -29,14 +30,16 @@ public abstract class SettingsInventory {
 
     public abstract void init();
 
-    protected ItemStack createItem(int slot, Material material, int amount, String name, Consumer<InventoryClickEvent> consumer) {
-        return createItem(slot, material, amount, name, false, consumer);
+    protected ItemStack createItem(int slot, Material material, int amount, String name, Consumer<InventoryClickEvent> consumer, String... lore) {
+        return createItem(slot, material, amount, name, false, consumer, lore);
     }
 
-    protected ItemStack createItem(int slot, Material material, int amount, String name, boolean glowing, Consumer<InventoryClickEvent> consumer) {
+    protected ItemStack createItem(int slot, Material material, int amount, String name, boolean glowing, Consumer<InventoryClickEvent> consumer,
+                                   String... lore) {
         ItemStack item = new ItemStack(material, amount);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
+        if(lore.length != 0) meta.setLore(Arrays.asList(lore));
         item.setItemMeta(meta);
         if(glowing) GlowEnchant.addGlow(item);
         items.put(slot, ClickableItem.of(item, consumer));

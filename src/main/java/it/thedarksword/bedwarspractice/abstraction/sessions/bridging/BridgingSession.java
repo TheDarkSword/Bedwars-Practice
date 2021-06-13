@@ -19,7 +19,10 @@ import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -149,18 +152,26 @@ public abstract class BridgingSession extends Session {
             return null;
         }
 
-        FakeBlock fakeBlock = new FakeBlock(Material.getMaterial(Item.getId(packet.getItemStack().getItem())),
-                player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), packet.getFace());
+        FakeBlock fakeBlock;
+        try {
+            Material material = Material.getMaterial(Item.getId(packet.getItemStack().getItem()));
+            if(!material.isSolid()) return null;
+            fakeBlock = new FakeBlock(Material.getMaterial(Item.getId(packet.getItemStack().getItem())),
+                    player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), packet.getFace());
+        } catch (NullPointerException e) {
+            return null;
+        }
+
 
         if(hand.getType() == bedwarsPractice.getConfigValue().SETTINGS_MATERIAL) {
             getSettingsInventory().open(player);
             player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
             return null;
         } else if(hand.getType() == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
-            bedwarsPractice.getInventories().getModeInventory().open(player);
-            player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
+            //bedwarsPractice.getInventories().getModeInventory().open(player);
             return null;
         }
+
 
         /*if(fakeBlock.getX() == player.getLocation().getBlockX() &&
                 fakeBlock.getY() == player.getLocation().getBlockY() &&
@@ -185,8 +196,8 @@ public abstract class BridgingSession extends Session {
                 return null;
         }
 
-        Material fromBlock = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).getType();
-        if((fromBlock != bedwarsPractice.getConfigValue().CAN_PLACED && fromBlock != Material.AIR) ||
+        //Material fromBlock = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).getType();
+        if(/*(fromBlock != bedwarsPractice.getConfigValue().CAN_PLACED && fromBlock != Material.AIR) ||*/
                 fakeBlock.getX() <= getSpawn().getX() || fakeBlock.getX() >= getFinishArea().lastX()) {
             player.sendMessage(bedwarsPractice.getConfigValue().INVALID_PLACE);
             player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
@@ -213,7 +224,7 @@ public abstract class BridgingSession extends Session {
     @Override
     public void pasteSchematic(Player player, Schematic schematic, Location location) {
         if(configuration.getLength() == BridgingConfiguration.BridgeLength.INFINITE) return;
-        bedwarsPractice.getServer().getScheduler().runTaskLaterAsynchronously(bedwarsPractice, () -> {
+        //bedwarsPractice.getServer().getScheduler().runTaskLaterAsynchronously(bedwarsPractice, () -> {
             int startX;
             if(configuration.getDirection() == BridgingConfiguration.BridgeDirection.FORWARD) {
                 startX = configuration.getLength().getXForward();
@@ -232,7 +243,7 @@ public abstract class BridgingSession extends Session {
                     }
                 }
             }
-        }, 20);
+        //}, 20);
     }
 
     @SuppressWarnings("deprecation")
@@ -282,9 +293,9 @@ public abstract class BridgingSession extends Session {
 
         float time = (System.currentTimeMillis() - getSessionStart())/1000f;
         String timeFormatted = Format.decimal3(time);
-        Title.buildAndSend(player, bedwarsPractice.getConfigValue().WIN_TITLE.replace("{time}", timeFormatted),
-                bedwarsPractice.getConfigValue().fadeIn, bedwarsPractice.getConfigValue().duration, bedwarsPractice.getConfigValue().fadeOut);
-        player.sendMessage(bedwarsPractice.getConfigValue().WIN_MESSAGE.replace("{time}", timeFormatted)
+        Title.buildAndSend(player, bedwarsPractice.getConfigValue().B_WIN_TITLE.replace("{time}", timeFormatted),
+                bedwarsPractice.getConfigValue().B_fadeIn, bedwarsPractice.getConfigValue().B_duration, bedwarsPractice.getConfigValue().B_fadeOut);
+        player.sendMessage(bedwarsPractice.getConfigValue().B_WIN_MESSAGE.replace("{time}", timeFormatted)
                 .replace("{peekSpeed}", Format.decimal3(peekSpeed)));
         setRunning(false);
 
@@ -303,13 +314,16 @@ public abstract class BridgingSession extends Session {
     public void loose(Player player) {
         player.teleport(getSpawn());
 
-        player.sendMessage(bedwarsPractice.getConfigValue().LOOSE_MESSAGE.replace("{peekSpeed}", Format.decimal3(peekSpeed)));
+        player.sendMessage(bedwarsPractice.getConfigValue().B_LOOSE_MESSAGE.replace("{peekSpeed}", Format.decimal3(peekSpeed)));
         setRunning(false);
 
         player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
         player.getInventory().setItem(1, bedwarsPractice.getConstantObjects().getBlock());
         player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
         player.getInventory().setItem(3, bedwarsPractice.getConstantObjects().getBlock());
+        PacketPlayOutNamedSoundEffect soundEffect = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(Sound.ENDERMAN_TELEPORT),
+                player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1, 1);
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(soundEffect);
     }
 
     @Override
@@ -322,19 +336,25 @@ public abstract class BridgingSession extends Session {
             list.add("§eper iniziare!");
         }*/
         if(!isRunning()) {
+            list.add("     ");
             list.add("§bPiazza un blocco");
             list.add("§bper iniziare!");
         }
         list.add(" ");
-        list.add("Distanza: §b30");
+        if(configuration.getLength() == BridgingConfiguration.BridgeLength.INFINITE)
+            list.add("Distanza: §bInfinita");
+         else
+            list.add("Distanza: §b" + (configuration.getLength().getXForward() + configuration.getHeight().getY()));
+
+
         //list.add("Piazzati: §b" + getPlaced());
         if(isRunning())
             list.add("Tempo: §b" + Format.decimal1((System.currentTimeMillis() - getSessionStart())/1000f));
         else
-            list.add("Tempo: §bNaN");
+            list.add("Tempo: §b0");
         list.add("Velocità: §b" + Format.decimal1(getMovementSpeed()) + " m/s");
         list.add("  ");
-        list.add("Miglior Tempo: §b" + (bestTime == Float.MAX_VALUE ? "NaN" : bestTime));
+        list.add("Miglior Tempo: §b" + (bestTime == Float.MAX_VALUE ? "Nessuno" : bestTime));
         list.add("   ");
         list.add("Modalità: §7" + getType().name());
         list.add("    ");

@@ -26,9 +26,6 @@ public class Manager {
         sessions.computeIfPresent(player.getEntityId(), (integer, session) -> {
             session.stop(player);
             session.clearSchematic(player);
-            for(Player other : Bukkit.getOnlinePlayers()) {
-                player.showPlayer(other);
-            }
             bedwarsPractice.getPacketListener().removePlayer(player);
             return sessions.remove(player.getEntityId());
         });
@@ -48,7 +45,8 @@ public class Manager {
         oldSession.clearSchematic(player);
         oldSession.stop(player);
         sessions.put(player.getEntityId(), newSession);
-        //newSession.pasteSchematic(player, bedwarsPractice.getSchematic(), bedwarsPractice.getSpawns().getBridging().getSchematicSpawn().cloneLocation());
+        if(newSession instanceof BridgingSession)
+            newSession.pasteSchematic(player, bedwarsPractice.getSchematic(), bedwarsPractice.getSpawns().getBridging().getSchematicSpawn().cloneLocation());
         newSession.load(player);
     }
 
@@ -61,15 +59,14 @@ public class Manager {
             if(oldSession.getClass().getSuperclass().equals(session.getClass().getSuperclass())) {
                 switchSession(player, oldSession, session);
                 return;
+            } else {
+                oldSession.stop(player);
             }
         }
         player.getInventory().clear();
         session.load(player);
         session.init(player);
         player.teleport(session.getSpawn());
-        for(Player other : Bukkit.getOnlinePlayers()) {
-            player.hidePlayer(other);
-        }
         sessions.put(player.getEntityId(), session);
         bedwarsPractice.getPacketListener().addPlayer(player);
         //session.pasteSchematic(player, bedwarsPractice.getSchematic(), bedwarsPractice.getSpawns().getBridging().getSchematicSpawn().cloneLocation());

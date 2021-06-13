@@ -47,10 +47,12 @@ public class HikariConnector implements Connector {
         HikariConfig config = new HikariConfig();
 
         MysqlDataSource ds = new MysqlDataSource();
-        String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?zeroDateTimeBehavior=convertToNull";
+        String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
         ds.setURL(url);
         ds.setUser(user);
         ds.setPassword(password);
+        ds.setCreateDatabaseIfNotExist(true);
+        ds.setZeroDateTimeBehavior("convertToNull");
 
         config.setDataSource(ds);
 

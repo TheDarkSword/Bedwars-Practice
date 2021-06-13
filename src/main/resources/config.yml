@@ -66,3 +66,12 @@ clutch:
     materials:
       start: IRON_BLOCK
       checkpoint: DIAMOND_BLOCK
+    win:
+      title:
+        message: "&a{time} secondi"
+        fadeIn: 5
+        duration: 60
+        fadeOut: 20
+      message: "&aCompletato! Ci hai messo {time} secondi"
+      loose:
+        message: "&cHai fallito!"

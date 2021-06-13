@@ -23,9 +23,9 @@ public class Spawns {
         if(!settings.getString("spawn.bridging.world").isEmpty()) {
             bridging.spawn = new Location(
                     Bukkit.getWorld(settings.getString("spawn.bridging.world")),
-                    settings.getInt("spawn.bridging.x"),
-                    settings.getInt("spawn.bridging.y"),
-                    settings.getInt("spawn.bridging.z"),
+                    settings.getDouble("spawn.bridging.x"),
+                    settings.getDouble("spawn.bridging.y"),
+                    settings.getDouble("spawn.bridging.z"),
                     settings.getFloat("spawn.bridging.yaw"),
                     settings.getFloat("spawn.bridging.pitch")
             );

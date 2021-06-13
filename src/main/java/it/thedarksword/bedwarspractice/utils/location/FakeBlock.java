@@ -5,6 +5,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
+import java.util.Objects;
+
 @Getter
 public class FakeBlock {
 
@@ -56,5 +58,29 @@ public class FakeBlock {
 
     public Location toBukkitLocation() {
         return new Location(world, x, y, z);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FakeBlock)) return false;
+        FakeBlock fakeBlock = (FakeBlock) o;
+        return getX() == fakeBlock.getX() && getY() == fakeBlock.getY() && getZ() == fakeBlock.getZ() && getMaterial() == fakeBlock.getMaterial() && getWorld().equals(fakeBlock.getWorld());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getMaterial(), getWorld(), getX(), getY(), getZ());
+    }
+
+    @Override
+    public String toString() {
+        return "FakeBlock{" +
+                "material=" + material +
+                ", world=" + world +
+                ", x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
     }
 }
