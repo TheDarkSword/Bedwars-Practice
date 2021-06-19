@@ -3,7 +3,6 @@ package it.thedarksword.bedwarspractice.abstraction.sessions;
 import io.netty.util.internal.ConcurrentSet;
 import it.thedarksword.bedwarspractice.abstraction.interfacing.sessions.TrainingSession;
 import it.thedarksword.bedwarspractice.clipboards.Region;
-import it.thedarksword.bedwarspractice.inventories.SettingsInventory;
 import it.thedarksword.bedwarspractice.utils.location.FakeBlock;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +23,8 @@ public abstract class Session implements TrainingSession {
     @Getter private final SessionType type;
     @Getter @Setter private Region finishArea;
 
-    //TODO: set to protected
     protected final Set<FakeBlock> fakeBlocks = new ConcurrentSet<>();
     protected final List<FakeBlock> schematicBlocks = new ArrayList<>();
-
-    @Getter @Setter protected SettingsInventory settingsInventory;
 
     public abstract PacketPlayInBlockDig handleBreak(Plugin plugin, Player player, PacketPlayInBlockDig packet);
     public abstract PacketPlayInBlockPlace handlePlace(Plugin plugin, Player player, PacketPlayInBlockPlace packet);

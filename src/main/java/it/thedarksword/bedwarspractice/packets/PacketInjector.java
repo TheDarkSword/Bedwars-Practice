@@ -85,8 +85,8 @@ public abstract class PacketInjector {
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             try {
                 msg = onPacketInAsync(player, ctx.channel(), msg);
-            } catch (Exception e) {
-                bedwarsPractice.getLogger().log(Level.SEVERE, "Error in onPacketInAsync().", e);
+            } catch (Exception ignored) {
+                //bedwarsPractice.getLogger().log(Level.SEVERE, "Error in onPacketInAsync().", e);
             }
 
             if (msg != null) {

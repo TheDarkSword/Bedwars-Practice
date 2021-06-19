@@ -40,6 +40,9 @@ public class ConfigValue {
     public final Material MODE_MATERIAL;
     public final String MODE_NAME;
     public final List<String> MODE_LORE;
+    public final Material KBC_DIFFICULTY_MATERIAL;
+    public final String KBC_DIFFICULTY_NAME;
+    public final List<String> KBC_DIFFICULTY_LORE;
 
     public final Material CHECKPOINT_ENABLED_MATERIAL;
     public final DyeColor CHECKPOINT_ENABLED_COLOR;
@@ -73,6 +76,17 @@ public class ConfigValue {
     public final String KBC_WIN_MESSAGE;
     public final String KBC_LOOSE_MESSAGE;
 
+    //Clutch Wall
+    public final Material WALL_BLOCK;
+    public final Material WALL_CHECKPOINT;
+    public final String WC_WIN_TITLE;
+    public final int WC_fadeIn;
+    public final int WC_duration;
+    public final int WC_fadeOut;
+    public final String WC_WIN_MESSAGE;
+    public final String WC_LOOSE_MESSAGE;
+    public final float WC_MAX_Y;
+
     public ConfigValue(Configuration configuration) {
         this.configuration = configuration;
 
@@ -98,6 +112,9 @@ public class ConfigValue {
         MODE_MATERIAL = Material.getMaterial(configuration.getString("mode.material"));
         MODE_NAME = getTranslated(configuration.getString("mode.name"));
         MODE_LORE = getTranslated(configuration.getStringList("mode.lore"));
+        KBC_DIFFICULTY_MATERIAL = Material.getMaterial(configuration.getString("kbc-difficulty.material"));
+        KBC_DIFFICULTY_NAME = getTranslated(configuration.getString("kbc-difficulty.name"));
+        KBC_DIFFICULTY_LORE = getTranslated(configuration.getStringList("kbc-difficulty.lore"));
 
         CHECKPOINT_ENABLED_MATERIAL = Material.getMaterial(configuration.getString("checkpoint.enabled.material"));
         CHECKPOINT_ENABLED_COLOR = DyeColor.valueOf(configuration.getString("checkpoint.enabled.color"));
@@ -129,6 +146,15 @@ public class ConfigValue {
         KBC_WIN_MESSAGE = getTranslated(configuration.getString("clutch.knockback.win.message"));
         KBC_LOOSE_MESSAGE = getTranslated(configuration.getString("clutch.knockback.loose.message"));
 
+        WALL_BLOCK = Material.getMaterial(configuration.getString("clutch.wall.materials.block"));
+        WALL_CHECKPOINT = Material.getMaterial(configuration.getString("clutch.wall.materials.checkpoint"));
+        WC_WIN_TITLE = getTranslated(configuration.getString("clutch.wall.win.title.message"));
+        WC_fadeIn = configuration.getInt("clutch.wall.win.title.fadeIn");
+        WC_duration = configuration.getInt("clutch.wall.win.title.duration");
+        WC_fadeOut = configuration.getInt("clutch.wall.win.title.fadeOut");
+        WC_WIN_MESSAGE = getTranslated(configuration.getString("clutch.wall.win.message"));
+        WC_LOOSE_MESSAGE = getTranslated(configuration.getString("clutch.wall.loose.message"));
+        WC_MAX_Y = configuration.getFloat("clutch.wall.max-y");
     }
 
     private String getTranslated(String string) {

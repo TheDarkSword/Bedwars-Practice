@@ -5,6 +5,8 @@ import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import it.thedarksword.bedwarspractice.bridging.sessions.straight.none.ShortStraightBridging;
 import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
+import it.thedarksword.bedwarspractice.clutch.sessions.WallClutch;
+import it.thedarksword.bedwarspractice.clutch.sessions.knockback.MediumKnockbackClutch;
 import it.thedarksword.bedwarspractice.commands.Module;
 import lombok.SneakyThrows;
 import org.bukkit.command.CommandSender;
@@ -39,7 +41,11 @@ public class Start extends Module {
                 player.setMetadata("session", new FixedMetadataValue(bedwarsPractice, session.getType().name()));
                 bedwarsPractice.getManager().newSession(player, session);
             } else if(args[1].equalsIgnoreCase("knockbackclutch")) {
-                KnockbackClutch session = new KnockbackClutch(bedwarsPractice, player);
+                KnockbackClutch session = new MediumKnockbackClutch(bedwarsPractice, player);
+                player.setMetadata("session", new FixedMetadataValue(bedwarsPractice, session.getType().name()));
+                bedwarsPractice.getManager().newSession(player, session);
+            } else if(args[1].equalsIgnoreCase("wallclutch")) {
+                WallClutch session = new WallClutch(bedwarsPractice, player);
                 player.setMetadata("session", new FixedMetadataValue(bedwarsPractice, session.getType().name()));
                 bedwarsPractice.getManager().newSession(player, session);
             }
@@ -73,6 +79,6 @@ public class Start extends Module {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        return ImmutableList.of("bridging", "knockbackclutch");
+        return ImmutableList.of("bridging", "knockbackclutch", "wallclutch");
     }
 }

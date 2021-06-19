@@ -15,6 +15,7 @@ public class ConstantObjects {
 
     private final ItemStack settings;
     private final ItemStack mode;
+    private final ItemStack kbcDifficulty;
 
     private final ItemStack checkpointEnabled;
     private final ItemStack checkpointDisabled;
@@ -35,6 +36,12 @@ public class ConstantObjects {
         meta.setDisplayName(bedwarsPractice.getConfigValue().MODE_NAME);
         meta.setLore(bedwarsPractice.getConfigValue().MODE_LORE);
         mode.setItemMeta(meta);
+
+        kbcDifficulty = new ItemStack(bedwarsPractice.getConfigValue().KBC_DIFFICULTY_MATERIAL, 1);
+        meta = kbcDifficulty.getItemMeta();
+        meta.setDisplayName(bedwarsPractice.getConfigValue().KBC_DIFFICULTY_NAME);
+        meta.setLore(bedwarsPractice.getConfigValue().KBC_DIFFICULTY_LORE);
+        kbcDifficulty.setItemMeta(meta);
 
         if(bedwarsPractice.getConfigValue().CHECKPOINT_ENABLED_MATERIAL == Material.INK_SACK)
             checkpointEnabled = new ItemStack(bedwarsPractice.getConfigValue().CHECKPOINT_ENABLED_MATERIAL, 1,

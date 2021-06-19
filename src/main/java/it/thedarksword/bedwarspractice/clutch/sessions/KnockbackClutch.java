@@ -1,10 +1,13 @@
 package it.thedarksword.bedwarspractice.clutch.sessions;
 
+import io.netty.util.internal.ConcurrentSet;
 import it.thedarksword.bedwarspractice.BedwarsPractice;
+import it.thedarksword.bedwarspractice.abstraction.sessions.SessionType;
 import it.thedarksword.bedwarspractice.abstraction.sessions.clutch.ClutchSession;
+import it.thedarksword.bedwarspractice.abstraction.sessions.clutch.KnockBackClutchConfiguration;
 import it.thedarksword.bedwarspractice.clipboards.Cuboid;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.MathHelper;
+import it.thedarksword.bedwarspractice.utils.formatter.Format;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -14,7 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.security.SecureRandom;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -23,10 +26,19 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
 
     private long lastKnock;
 
-    public KnockbackClutch(BedwarsPractice bedwarsPractice, Player player) {
-        super(bedwarsPractice, player);
+    private final KnockBackClutchConfiguration configuration;
+
+    public KnockbackClutch(BedwarsPractice bedwarsPractice, Player player, KnockBackClutchConfiguration configuration) {
+        super(SessionType.KB_CLUTCH, bedwarsPractice, player);
+        this.configuration = configuration;
         setFinishArea(new Cuboid(bedwarsPractice.getSpawns().getKnockbackClutch().getFinish1(),
                 bedwarsPractice.getSpawns().getKnockbackClutch().getFinish2()));
+    }
+
+    @Override
+    public void init(Player player) {
+        super.init(player);
+        player.getInventory().setItem(6, bedwarsPractice.getConstantObjects().getKbcDifficulty());
     }
 
     @Override
@@ -53,6 +65,16 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
             //double rX = -0.35 + (0.35 + 0.35) * random.nextDouble();
             double rX, rZ;
             if(random.nextBoolean()) {
+                rX = configuration.getXMin() + (configuration.getXMax() - configuration.getXMin()) * random.nextDouble();
+            } else {
+                rX = (configuration.getXMin() + (configuration.getXMax() - configuration.getXMin()) * random.nextDouble()) * -1;
+            }
+            if(random.nextBoolean()) {
+                rZ = configuration.getZMin() + (configuration.getZMax() - configuration.getZMin()) * random.nextDouble();
+            } else {
+                rZ = (configuration.getZMin() + (configuration.getZMax() - configuration.getZMin()) * random.nextDouble()) * -1;
+            }
+            /*if(random.nextBoolean()) {
                 rX = 0.1 + 0.1 * random.nextDouble();
             } else {
                 rX = (0.1 + 0.1 * random.nextDouble()) * -1;
@@ -61,7 +83,7 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
                 rZ = 0.3 + 0.1 * random.nextDouble();
             } else {
                 rZ = (0.3 + 0.1 * random.nextDouble()) * -1;
-            }
+            }*/
             player.setVelocity(new Vector(rX, y, rZ));
             player.damage(0.0000000001, null);
             /*double d0 = (player.getLocation().getX() + rX) - player.getLocation().getX();
@@ -109,7 +131,7 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
     }
 
     public static class KnockbackClutchTask extends BukkitRunnable {
-        private final Set<KnockbackClutch> knockbackClutches = new HashSet<>();
+        private final Set<KnockbackClutch> knockbackClutches = new ConcurrentSet<>();
 
         @Override
         public void run() {
@@ -123,5 +145,27 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
         public void removeTask(KnockbackClutch knockbackClutch) {
             knockbackClutches.remove(knockbackClutch);
         }
+    }
+
+    @Override
+    public void sidebarTemplate(List<String> list) {
+        list.add(ChatColor.GRAY + Format.now());
+        if(!isRunning()) {
+            list.add("     ");
+            list.add("§bSegui il percorso");
+        }
+        list.add(" ");
+        if(isRunning())
+            list.add("Tempo: §b" + Format.decimal1((System.currentTimeMillis() - getSessionStart())/1000f));
+        else
+            list.add("Tempo: §b0");
+        list.add("  ");
+        list.add("Miglior Tempo: §b" + (getBestTime() == Float.MAX_VALUE ? "Nessuno" : getBestTime()));
+        list.add("   ");
+        list.add("Modalità: §7" + getType().getName());
+        list.add("    ");
+        list.add("Difficoltà: §7" + configuration.getName());
+        list.add("      ");
+        list.add(ChatColor.YELLOW + "play.coralmc.it");
     }
 }

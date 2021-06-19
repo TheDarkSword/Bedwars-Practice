@@ -37,6 +37,6 @@ public class SetSpawn extends Module {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        return ImmutableList.of("bridging", "clutchKnockback");
+        return ImmutableList.of("bridging", "clutchKnockback", "clutchwall");
     }
 }

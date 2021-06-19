@@ -3,11 +3,11 @@ package it.thedarksword.bedwarspractice.manager;
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
+import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -56,7 +56,8 @@ public class Manager {
         if(sessions.containsKey(player.getEntityId())) {
             Session oldSession = sessions.get(player.getEntityId());
             if(oldSession.getClass().equals(session.getClass())) return;
-            if(oldSession.getClass().getSuperclass().equals(session.getClass().getSuperclass())) {
+            if(oldSession.getClass().getSuperclass().equals(session.getClass().getSuperclass()) &&
+                    (oldSession instanceof BridgingSession || oldSession instanceof KnockbackClutch)) {
                 switchSession(player, oldSession, session);
                 return;
             } else {

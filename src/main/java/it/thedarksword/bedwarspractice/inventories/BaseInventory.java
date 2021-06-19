@@ -1,6 +1,6 @@
 package it.thedarksword.bedwarspractice.inventories;
 
-import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
+import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.enchantment.GlowEnchant;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -16,15 +16,15 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 
 @Getter
-public abstract class SettingsInventory {
+public abstract class BaseInventory {
 
+    protected final BedwarsPractice bedwarsPractice;
     protected final Inventory inventory;
-    protected final BridgingSession session;
     protected final HashMap<Integer, ClickableItem> items = new HashMap<>();
 
-    public SettingsInventory(BridgingSession session, String name, int size){
+    public BaseInventory(BedwarsPractice bedwarsPractice, String name, int size){
+        this.bedwarsPractice = bedwarsPractice;
         this.inventory = Bukkit.createInventory(null, size, name);
-        this.session = session;
         init();
     }
 

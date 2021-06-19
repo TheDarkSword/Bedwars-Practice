@@ -3,6 +3,7 @@ package it.thedarksword.bedwarspractice.commands;
 import com.google.common.collect.ImmutableList;
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.commands.modules.*;
+import it.thedarksword.bedwarspractice.commands.modules.Top;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,6 +26,8 @@ public class BedwarsPracticeCommand implements CommandExecutor, TabCompleter {
         Module.registerModule(new SetFinish(bedwarsPractice));
         Module.registerModule(new Menu(bedwarsPractice));
         Module.registerModule(new Stop(bedwarsPractice));
+        Module.registerModule(new Players(bedwarsPractice));
+        Module.registerModule(new Top(bedwarsPractice));
     }
 
     @Override

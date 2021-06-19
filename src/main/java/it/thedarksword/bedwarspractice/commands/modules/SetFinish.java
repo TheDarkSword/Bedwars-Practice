@@ -38,6 +38,6 @@ public class SetFinish extends Module {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        return ImmutableList.of("clutchKnockback 1", "clutchKnockback 2");
+        return ImmutableList.of("clutchKnockback 1", "clutchKnockback 2", "clutchwall 1", "clutchwall 2");
     }
 }

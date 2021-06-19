@@ -1,5 +1,6 @@
 package it.thedarksword.bedwarspractice.inventories;
 
+import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingConfiguration;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import it.thedarksword.bedwarspractice.bridging.sessions.InfiniteBridging;
@@ -18,14 +19,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
-public class BridgingSettingsInventory extends SettingsInventory {
+public class BridgingSettingsInventory extends BaseInventory {
 
     private BridgingConfiguration.BridgeLength length = BridgingConfiguration.BridgeLength.SHORT;
     private BridgingConfiguration.BridgeHeight height = BridgingConfiguration.BridgeHeight.NONE;
     private BridgingConfiguration.BridgeDirection direction = BridgingConfiguration.BridgeDirection.FORWARD;
 
+    protected final BridgingSession session;
+
     public BridgingSettingsInventory(BridgingSession session){
-        super(session, "Settings", 54);
+        super(session.getBedwarsPractice(), "Impostazioni", 54);
+        this.session = session;
     }
 
     public void init() {

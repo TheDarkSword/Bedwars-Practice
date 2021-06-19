@@ -1,5 +1,6 @@
 package it.thedarksword.bedwarspractice.abstraction.sessions.bridging;
 
+import io.netty.util.internal.ConcurrentSet;
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
 import it.thedarksword.bedwarspractice.abstraction.sessions.SessionType;
@@ -17,9 +18,11 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftChunk;
 import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -27,6 +30,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Setter(value = AccessLevel.PROTECTED)
 public abstract class BridgingSession extends Session {
@@ -36,11 +41,16 @@ public abstract class BridgingSession extends Session {
     @Getter private final BridgingConfiguration configuration;
     @Getter private final BedwarsPractice bedwarsPractice;
 
+    @Getter protected final Map<ChunkCoordIntPair, Set<FakeBlock>> fakeBlocks = new ConcurrentHashMap<>();
+    @Getter @Setter protected BridgingSettingsInventory settingsInventory;
+
     @Getter private long sessionStart;
     @Getter private int attempts;
     @Getter private boolean running;
     @Getter private double peekSpeed;
     @Getter private float bestTime;
+
+    private AtomicBoolean stopping = new AtomicBoolean();
 
     public BridgingSession(BridgingConfiguration configuration, BedwarsPractice bedwarsPractice) {
         this(configuration, bedwarsPractice, null);
@@ -66,10 +76,12 @@ public abstract class BridgingSession extends Session {
             startX = configuration.getLength().getXDiagonal();
         }
         location.add(startX, configuration.getHeight().getY(), configuration.getDirection().getZ());
-        setFinishArea(new Cuboid(location.getX(),
-                location.getY() + schematic.getHeight() - bedwarsPractice.getConfigValue().FINISH_Y, location.getZ(),
+        setFinishArea(new Cuboid(
+                location.getX(),
+                location.getY() + schematic.getHeight() - bedwarsPractice.getConfigValue().FINISH_Y,
+                location.getZ(),
                 location.getX() + schematic.getWidth(),
-                location.getY() + schematic.getHeight(),
+                location.getY() + schematic.getHeight() - bedwarsPractice.getConfigValue().FINISH_Y + 1,
                 location.getZ() + schematic.getLength()));
     }
 
@@ -101,7 +113,7 @@ public abstract class BridgingSession extends Session {
     }
 
     public void movement(Location from, Location to) {
-        movements.put(System.currentTimeMillis(), from.distance(to)*2);
+        movements.put(System.currentTimeMillis(), from.distance(to));
     }
 
     @SuppressWarnings("deprecation")
@@ -155,10 +167,18 @@ public abstract class BridgingSession extends Session {
         FakeBlock fakeBlock;
         try {
             Material material = Material.getMaterial(Item.getId(packet.getItemStack().getItem()));
-            if(!material.isSolid()) return null;
+            if(!material.isSolid() &&
+                    material != bedwarsPractice.getConfigValue().SETTINGS_MATERIAL &&
+                    material != bedwarsPractice.getConfigValue().MODE_MATERIAL) return null;
             fakeBlock = new FakeBlock(Material.getMaterial(Item.getId(packet.getItemStack().getItem())),
                     player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), packet.getFace());
         } catch (NullPointerException e) {
+            return null;
+        }
+
+        if(stopping.get()) {
+            player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
+            player.setItemInHand(hand);
             return null;
         }
 
@@ -184,17 +204,28 @@ public abstract class BridgingSession extends Session {
                 System.out.println(packet.getItemStack().getItem().interactWith(
                         packet.getItemStack(), ((CraftPlayer) player).getHandle(), ((CraftWorld)player.getWorld()).getHandle(),
                         blockPosition, EnumDirection.fromType1(packet.getFace()), packet.d(), packet.e(), packet.f())));*/
-        Item item = packet.getItemStack().getItem();
+        /*Item item = packet.getItemStack().getItem();
         if(item instanceof ItemBlock) {
+            BlockPosition temp = new BlockPosition(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
+            IBlockData var9 = ((CraftWorld)player.getWorld()).getHandle().getType(temp);
+            if(var9.getBlock().getMaterial() == net.minecraft.server.v1_8_R3.Material.AIR) {
+                var9 =  CraftMagicNumbers.getBlock(Material.WOOL.getId()).getBlockData();
+            }
+            Block var10 = var9.getBlock();
+            if (!var10.a(((CraftWorld)player.getWorld()).getHandle(), temp)) {
+                temp = temp.shift(EnumDirection.fromType1(packet.getFace()));
+            }
             if(!((CraftWorld) player.getWorld()).getHandle().a(
                     ((ItemBlock) item).d(),
-                    blockPosition.shift(EnumDirection.fromType1(packet.getFace())),
+                    //blockPosition.shift(EnumDirection.fromType1(packet.getFace())),
+                    temp,
                     false,
                     EnumDirection.fromType1(packet.getFace()),
                     null,
-                    packet.getItemStack()))
+                    packet.getItemStack())) {
                 return null;
-        }
+            }
+        }*/
 
         //Material fromBlock = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).getType();
         if(/*(fromBlock != bedwarsPractice.getConfigValue().CAN_PLACED && fromBlock != Material.AIR) ||*/
@@ -209,13 +240,46 @@ public abstract class BridgingSession extends Session {
             start(player);
         }
 
-        setFakeBlock(fakeBlock);
+        //setFakeBlock(fakeBlock);
+        Chunk chunk = player.getWorld().getChunkAt(fakeBlock.getX() >> 4, fakeBlock.getZ() >> 4);
+        ChunkCoordIntPair chunkCoordIntPair = new ChunkCoordIntPair(chunk.getX(), chunk.getZ());
+        if(fakeBlocks.containsKey(chunkCoordIntPair)) {
+            Set<FakeBlock> set = fakeBlocks.get(chunkCoordIntPair);
+            set.add(fakeBlock);
+            /*System.out.println("Chunk: X: " + chunkCoordIntPair.x + "  -  Z: " + chunkCoordIntPair.z);
+            System.out.println("X: " + fakeBlock.getX());
+            System.out.println("Y: " + fakeBlock.getY());
+            System.out.println("Z: " + fakeBlock.getZ());*/
+        } else {
+            Set<FakeBlock> set = new ConcurrentSet<>();
+            set.add(fakeBlock);
+            fakeBlocks.put(chunkCoordIntPair, set);
+            /*System.out.println("Nuovo Chunk: X: " + chunkCoordIntPair.x + "  -  Z: " + chunkCoordIntPair.z);
+            System.out.println("X: " + fakeBlock.getX());
+            System.out.println("Y: " + fakeBlock.getY());
+            System.out.println("Z: " + fakeBlock.getZ());*/
+        }
         //getPlaced().increment();
 
-        if (hand.getAmount() == 1) {
-            player.setItemInHand(null);
-        } else {
-            hand.setAmount(hand.getAmount() - 1);
+        Item item = packet.getItemStack().getItem();
+        if(item instanceof ItemBlock) {
+            if(((CraftWorld) player.getWorld()).getHandle().a(
+                    ((ItemBlock) item).d(),
+                    blockPosition.shift(EnumDirection.fromType1(packet.getFace())),
+                    false,
+                    EnumDirection.fromType1(packet.getFace()),
+                    null,
+                    packet.getItemStack())) {
+                if (hand.getAmount() == 1) {
+                    player.setItemInHand(null);
+                } else {
+                    hand.setAmount(hand.getAmount() - 1);
+                }
+
+                PacketPlayOutNamedSoundEffect soundEffect = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(Sound.STEP_WOOL),
+                        player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1, 1);
+                ((CraftPlayer)player).getHandle().playerConnection.sendPacket(soundEffect);
+            }
         }
         return null;
     }
@@ -246,15 +310,16 @@ public abstract class BridgingSession extends Session {
         //}, 20);
     }
 
-    @SuppressWarnings("deprecation")
+    //@SuppressWarnings("deprecation")
     @Override
     public void stop(Player player) {
+        stopping.set(true);
         setSessionStart(-1L);
         setRunning(false);
         setPeekSpeed(0);
         //getPlaced().setValue(0);
 
-        bedwarsPractice.getServer().getScheduler().runTaskAsynchronously(bedwarsPractice, () -> Optional.ofNullable(player).ifPresent(other -> {
+        //bedwarsPractice.getServer().getScheduler().runTaskAsynchronously(bedwarsPractice, () -> Optional.ofNullable(player).ifPresent(other -> {
             /* TODO
              * Play sound Δ times
              * Δ = ln(N) -> integer
@@ -262,16 +327,37 @@ public abstract class BridgingSession extends Session {
              * Make an effect where block disappear ???
              * Example effect: Smoke
              */
-            fakeBlocks.forEach(fakeBlock -> {
+            CraftPlayer craftPlayer = (CraftPlayer) player;
+            fakeBlocks.entrySet().forEach((entry -> {
+                net.minecraft.server.v1_8_R3.Chunk chunk = ((CraftChunk)player.getWorld().getChunkAt(entry.getKey().x, entry.getKey().z)).getHandle();
+                short[] blockData = new short[entry.getValue().size()];
+                int i = 0;
+               /*System.out.println("X: " + entry.getKey().x + "  -   Z: " + entry.getKey().z);
+                System.out.println("--------");*/
+                for(FakeBlock fakeBlock : entry.getValue()) {
+                    /*System.out.println("X: " + (fakeBlock.getX() & 15));
+                    System.out.println("Y: " + (fakeBlock.getY()));
+                    System.out.println("Z: " + (fakeBlock.getZ() & 15));
+                    System.out.println("--------");*/
+                    blockData[i] = (short) (((fakeBlock.getX() & 15) << 12) | ((fakeBlock.getZ() & 15) << 8) | (fakeBlock.getY()));
+                    i++;
+                }
+                //System.out.println("*********");
+                PacketPlayOutMultiBlockChange multiBlockChange = new PacketPlayOutMultiBlockChange(blockData.length, blockData, chunk);
+                craftPlayer.getHandle().playerConnection.sendPacket(multiBlockChange);
+            }));
+            //System.out.println("############");
+            /*fakeBlocks.forEach(fakeBlock -> {
                 other.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            });
+            });*/
             fakeBlocks.clear();
-        }));
+            stopping.set(false);
+        //}));
         /*Optional.ofNullable(player).ifPresent(other -> {
             fakeBlocks.forEach(fakeBlock ->
                     other.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));

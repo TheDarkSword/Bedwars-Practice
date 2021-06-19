@@ -3,6 +3,7 @@ package it.thedarksword.bedwarspractice.commands;
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -48,21 +49,7 @@ public class BwTest implements CommandExecutor {
         bedwarsPractice.getPractice().getFinishSchematic()
                 .pasteSchematic(location, bedwarsPractice.getPractice().getPlayers().get(player.getName()));
         sender.sendMessage("Executed");*/
-        double rX, rZ;
-        if(random.nextBoolean()) {
-            rX = 0.1 + 0.1 * random.nextDouble();
-        } else {
-            rX = (0.1 + 0.1 * random.nextDouble()) * -1;
-        }
-        if(random.nextBoolean()) {
-            rZ = 0.3 + 0.1 * random.nextDouble();
-        } else {
-            rZ = (0.3 + 0.1 * random.nextDouble()) * -1;
-        }
-        player.setVelocity(new Vector(rX, 0.48, rZ));
-        player.damage(0.0000000001, null);
-        System.out.println("rX: " + rX);
-        System.out.println("rZ: " + rZ);
+        player.sendMessage("Y: " + player.getEyeLocation().getY());
         return true;
     }
 }
