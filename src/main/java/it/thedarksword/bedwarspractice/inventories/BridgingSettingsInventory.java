@@ -1,5 +1,6 @@
 package it.thedarksword.bedwarspractice.inventories;
 
+import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingConfiguration;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import it.thedarksword.bedwarspractice.bridging.sessions.InfiniteBridging;
@@ -15,19 +16,33 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 @Getter
-public class BridgingSettingsInventory extends SettingsInventory {
+public class BridgingSettingsInventory extends BaseInventory {
 
     private BridgingConfiguration.BridgeLength length = BridgingConfiguration.BridgeLength.SHORT;
     private BridgingConfiguration.BridgeHeight height = BridgingConfiguration.BridgeHeight.NONE;
     private BridgingConfiguration.BridgeDirection direction = BridgingConfiguration.BridgeDirection.FORWARD;
 
+    protected final BridgingSession session;
+
     public BridgingSettingsInventory(BridgingSession session){
-        super(session, "Settings", 54);
+        super(session.getBedwarsPractice(), "Impostazioni", 54);
+        this.session = session;
     }
 
     public void init() {
+        for(int j = 0; j < 6; j++) {
+            if(j > 0 && j < 5) {
+                inventory.setItem((j * 9), new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15));
+                inventory.setItem((j * 9) + 8, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15));
+            } else {
+                for (int i = 0; i < 9; i++) {
+                    inventory.setItem((j * 9) + i, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15));
+                }
+            }
+        }
         inventory.setItem(10, createItem(10, Material.WOOL, 30, ChatColor.GREEN + "30 Blocchi", true, event -> {
             if(!(event.getWhoClicked() instanceof Player) || GlowEnchant.isGlowing(event.getCurrentItem())) return;
             Player player = (Player) event.getWhoClicked();
@@ -39,7 +54,7 @@ public class BridgingSettingsInventory extends SettingsInventory {
 
             length = BridgingConfiguration.BridgeLength.SHORT;
             session.getBedwarsPractice().getManager().newSession(player, calculateSession());
-        }));
+        }, ChatColor.GRAY + "Imposta la distanza", ChatColor.GRAY + "di arrivo a 30 blocchi"));
         inventory.setItem(19, createItem(19, Material.WOOL, 50, ChatColor.GREEN + "50 Blocchi", event -> {
             if(!(event.getWhoClicked() instanceof Player) || GlowEnchant.isGlowing(event.getCurrentItem())) return;
             Player player = (Player) event.getWhoClicked();
@@ -51,7 +66,7 @@ public class BridgingSettingsInventory extends SettingsInventory {
 
             length = BridgingConfiguration.BridgeLength.MEDIUM;
             session.getBedwarsPractice().getManager().newSession(player, calculateSession());
-        }));
+        }, ChatColor.GRAY + "Imposta la distanza", ChatColor.GRAY + "di arrivo a 50 blocchi"));
         inventory.setItem(28, createItem(28, Material.WOOL, 64, ChatColor.GREEN + "100 Blocchi", event -> {
             if(!(event.getWhoClicked() instanceof Player) || GlowEnchant.isGlowing(event.getCurrentItem())) return;
             Player player = (Player) event.getWhoClicked();
@@ -63,7 +78,7 @@ public class BridgingSettingsInventory extends SettingsInventory {
 
             length = BridgingConfiguration.BridgeLength.LONG;
             session.getBedwarsPractice().getManager().newSession(player, calculateSession());
-        }));
+        }, ChatColor.GRAY + "Imposta la distanza", ChatColor.GRAY + "di arrivo a 100 blocchi"));
         inventory.setItem(37, createItem(37, Material.WOOL, 1, ChatColor.GREEN + "Infiniti!", event -> {
             if(!(event.getWhoClicked() instanceof Player) || GlowEnchant.isGlowing(event.getCurrentItem())) return;
             Player player = (Player) event.getWhoClicked();
@@ -75,9 +90,9 @@ public class BridgingSettingsInventory extends SettingsInventory {
 
             session.getBedwarsPractice().getManager().newSession(player, new InfiniteBridging(session.getBedwarsPractice(),
                     (BridgingSettingsInventory) session.getSettingsInventory()));
-        }));
+        },ChatColor.GRAY + "Non hai una fine", ChatColor.GRAY + "vai più lontano che puoi"));
 
-        inventory.setItem(12, createItem(12, Material.WOOD_STAIRS, 1, ChatColor.GREEN + "None", true, event -> {
+        inventory.setItem(12, createItem(12, Material.WOOD_STAIRS, 1, ChatColor.GREEN + "A Livello", true, event -> {
             if(!(event.getWhoClicked() instanceof Player) || GlowEnchant.isGlowing(event.getCurrentItem())) return;
             Player player = (Player) event.getWhoClicked();
             Inventory inventory = event.getInventory();
@@ -87,8 +102,8 @@ public class BridgingSettingsInventory extends SettingsInventory {
 
             height = BridgingConfiguration.BridgeHeight.NONE;
             session.getBedwarsPractice().getManager().newSession(player, calculateSession());
-        }));
-        inventory.setItem(21, createItem(21, Material.WOOD_STAIRS, 1, ChatColor.GREEN + "Slight", event -> {
+        },ChatColor.GRAY + "Imposta l'isola", ChatColor.GRAY + "a livello con la tua"));
+        inventory.setItem(21, createItem(21, Material.WOOD_STAIRS, 1, ChatColor.GREEN + "Lievemente Rialzato", event -> {
             if(!(event.getWhoClicked() instanceof Player) || GlowEnchant.isGlowing(event.getCurrentItem())) return;
             Player player = (Player) event.getWhoClicked();
             Inventory inventory = event.getInventory();
@@ -98,8 +113,8 @@ public class BridgingSettingsInventory extends SettingsInventory {
 
             height = BridgingConfiguration.BridgeHeight.SLIGHT;
             session.getBedwarsPractice().getManager().newSession(player, calculateSession());
-        }));
-        inventory.setItem(30, createItem(30, Material.WOOD_STAIRS, 1, ChatColor.GREEN + "Staircase", event -> {
+        },ChatColor.GRAY + "Imposta l'isola", ChatColor.GRAY + "leggermente in alto"));
+        inventory.setItem(30, createItem(30, Material.WOOD_STAIRS, 1, ChatColor.GREEN + "Rialzato", event -> {
             if(!(event.getWhoClicked() instanceof Player) || GlowEnchant.isGlowing(event.getCurrentItem())) return;
             Player player = (Player) event.getWhoClicked();
             Inventory inventory = event.getInventory();
@@ -109,9 +124,9 @@ public class BridgingSettingsInventory extends SettingsInventory {
 
             height = BridgingConfiguration.BridgeHeight.STAIRCASE;
             session.getBedwarsPractice().getManager().newSession(player, calculateSession());
-        }));
+        },ChatColor.GRAY + "Imposta l'isola", ChatColor.GRAY + "molto in alto"));
 
-        inventory.setItem(14, createItem(14, Material.ARROW, 1, ChatColor.GREEN + "Straight", true, event -> {
+        inventory.setItem(14, createItem(14, Material.ARROW, 1, ChatColor.GREEN + "Dritta", true, event -> {
             if(!(event.getWhoClicked() instanceof Player) || GlowEnchant.isGlowing(event.getCurrentItem())) return;
             Player player = (Player) event.getWhoClicked();
             Inventory inventory = event.getInventory();
@@ -120,8 +135,8 @@ public class BridgingSettingsInventory extends SettingsInventory {
 
             direction = BridgingConfiguration.BridgeDirection.FORWARD;
             session.getBedwarsPractice().getManager().newSession(player, calculateSession());
-        }));
-        inventory.setItem(23, createItem(23, Material.ARROW, 1, ChatColor.GREEN + "Diagonal", event -> {
+        }, ChatColor.GRAY + "Imposta l'isola", ChatColor.GRAY + "di fronte alla tua"));
+        inventory.setItem(23, createItem(23, Material.ARROW, 1, ChatColor.GREEN + "Diagonale", event -> {
             if(!(event.getWhoClicked() instanceof Player) || GlowEnchant.isGlowing(event.getCurrentItem())) return;
             Player player = (Player) event.getWhoClicked();
             Inventory inventory = event.getInventory();
@@ -130,7 +145,7 @@ public class BridgingSettingsInventory extends SettingsInventory {
 
             direction = BridgingConfiguration.BridgeDirection.DIAGONAL;
             session.getBedwarsPractice().getManager().newSession(player, calculateSession());
-        }));
+        }, ChatColor.GRAY + "Imposta l'isola", ChatColor.GRAY + "in diagonale alla tua"));
     }
 
     private BridgingSession calculateSession() {

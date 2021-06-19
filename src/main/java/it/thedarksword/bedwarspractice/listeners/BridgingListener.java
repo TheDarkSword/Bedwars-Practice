@@ -12,7 +12,6 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
@@ -23,11 +22,6 @@ import java.util.Optional;
 public class BridgingListener implements Listener {
 
     private final BedwarsPractice bedwarsPractice;
-
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) {
-        if(bedwarsPractice.getManager().session(event.getPlayer()).isPresent()) event.setCancelled(true);
-    }
 
     @EventHandler
     public void inventoryClick(InventoryClickEvent event) {
@@ -45,7 +39,11 @@ public class BridgingListener implements Listener {
 
             if(session instanceof BridgingSession &&
                     event.getInventory().equals(session.getSettingsInventory().getInventory())) {
-                session.getSettingsInventory().getItems().get(event.getSlot()).run(event);
+                //session.getSettingsInventory().getItems().get(event.getSlot()).run(event);
+                session.getSettingsInventory().getItems().computeIfPresent(event.getSlot(),(integer, clickableItem) -> {
+                    clickableItem.run(event);
+                    return clickableItem;
+                });
             }
         }
     }

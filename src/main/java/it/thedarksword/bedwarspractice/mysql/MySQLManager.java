@@ -1,10 +1,16 @@
 package it.thedarksword.bedwarspractice.mysql;
 
+import com.google.common.collect.ImmutableList;
 import it.thedarksword.bedwarspractice.config.ConfigValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
@@ -80,5 +86,44 @@ public class MySQLManager {
             }
         }
         return Float.MAX_VALUE;
+    }
+
+    public List<String> getTypes() throws SQLException {
+        List<String> list = new ArrayList<>();
+        CompositeResult result = mySQL.executeQuery("SELECT name FROM " + configValue.TABLE_TYPES,
+                "");
+
+        while (result.next()) {
+            list.add(result.getString("name"));
+        }
+
+        return list;
+    }
+
+    public List<Pair<String, Double>> getTop(String mode) throws SQLException {
+        if(mySQL.rowExists("name", mode, configValue.TABLE_TYPES)) {
+            List<Pair<String, Double>> list = new ArrayList<>();
+            CompositeResult result = mySQL.executeQuery("SELECT username, time FROM " +
+                            configValue.TABLE_PLAYERS + ", " +
+                            configValue.TABLE_TYPES + ", " +
+                            configValue.TABLE_RECORDS + " WHERE " +
+                            configValue.TABLE_PLAYERS + ".id = player_id AND " +
+                            configValue.TABLE_TYPES + ".id = type_id AND name = '" +
+                            mode + "' ORDER BY time ASC LIMIT 20"
+            , "");
+
+            ResultSet resultSet = result.getResult();
+            while (resultSet.next()) {
+                list.add(new ImmutablePair<>(result.getString("username"), result.getDouble("time")));
+            }
+
+            result.close();
+            return list;
+        }
+        return ImmutableList.of();
+    }
+
+    public void deleteAllRecords() throws SQLException {
+        mySQL.executeUpdate("TRUNCATE {table}", configValue.TABLE_RECORDS);
     }
 }

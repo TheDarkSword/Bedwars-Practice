@@ -4,19 +4,20 @@ import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
 import it.thedarksword.bedwarspractice.abstraction.sessions.SessionType;
 import it.thedarksword.bedwarspractice.clipboards.Schematic;
+import it.thedarksword.bedwarspractice.utils.Title;
 import it.thedarksword.bedwarspractice.utils.formatter.Format;
 import it.thedarksword.bedwarspractice.utils.location.FakeBlock;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.Item;
-import net.minecraft.server.v1_8_R3.PacketPlayInBlockDig;
-import net.minecraft.server.v1_8_R3.PacketPlayInBlockPlace;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -149,6 +150,12 @@ public abstract class ClutchSession extends Session {
             bestTime = time;
         }
 
+        String timeFormatted = Format.decimal3(time);
+        Title.buildAndSend(player, bedwarsPractice.getConfigValue().KBC_WIN_TITLE.replace("{time}", timeFormatted),
+                bedwarsPractice.getConfigValue().KBC_fadeIn,
+                bedwarsPractice.getConfigValue().KBC_duration, bedwarsPractice.getConfigValue().KBC_fadeOut);
+        player.sendMessage(bedwarsPractice.getConfigValue().KBC_WIN_MESSAGE.replace("{time}", timeFormatted));
+
         fakeBlocks.forEach(fakeBlock -> player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));
         fakeBlocks.clear();
 
@@ -160,20 +167,26 @@ public abstract class ClutchSession extends Session {
     @Override
     public void loose(Player player) {
         player.teleport(getSpawn());
-        if(checkPoint == null)
+        if(checkPoint == null) {
             setRunning(false);
+            player.sendMessage(bedwarsPractice.getConfigValue().KBC_LOOSE_MESSAGE);
+        }
 
         fakeBlocks.forEach(fakeBlock -> player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));
         fakeBlocks.clear();
 
         player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
         player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
+        PacketPlayOutNamedSoundEffect soundEffect = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(Sound.ENDERMAN_TELEPORT),
+                player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1, 1);
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(soundEffect);
     }
 
     @Override
     public void sidebarTemplate(List<String> list) {
         list.add(ChatColor.GRAY + Format.now());
         if(!isRunning()) {
+            list.add("     ");
             list.add("§bSegui il percorso");
         }
         list.add(" ");

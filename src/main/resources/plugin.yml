@@ -1,5 +1,5 @@
 name: BedwarsPractice
-version: 1.0.0
+version: 1.0.2
 author: TheDarkSword
 main: it.thedarksword.bedwarspractice.BedwarsPractice
 description: Just a BedwarsPractice Plugin
@@ -11,3 +11,7 @@ commands:
     description: Just the main Command
   bwtest:
     description: Just a test Command
+  top:
+    description: Get the TopList
+  reset:
+    description: Reset all Records

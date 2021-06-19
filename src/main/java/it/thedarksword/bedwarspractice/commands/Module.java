@@ -31,11 +31,11 @@ public abstract class Module {
     public abstract List<String> onTabComplete(CommandSender sender, String[] args);
 
     public static void registerModule(Module module) {
-        modules.put(module.getName(), module);
-        for(String alias : module.getAliases()) modules.put(alias, module);
+        modules.put(module.getName().toLowerCase(), module);
+        for(String alias : module.getAliases()) modules.put(alias.toLowerCase(), module);
     }
 
     public static Module getModuleByName(String name) {
-        return modules.get(name);
+        return modules.get(name.toLowerCase());
     }
 }

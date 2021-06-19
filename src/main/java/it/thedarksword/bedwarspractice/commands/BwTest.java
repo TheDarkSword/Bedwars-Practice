@@ -1,7 +1,9 @@
 package it.thedarksword.bedwarspractice.commands;
 
 import it.thedarksword.bedwarspractice.BedwarsPractice;
+import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.security.SecureRandom;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class BwTest implements CommandExecutor {
@@ -20,6 +23,7 @@ public class BwTest implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
+        if(!player.hasPermission("bw.test")) return true;
         /*if(args.length == 1) {
             /*World nmsWorld = ((CraftWorld) player.getWorld()).getHandle();
             org.bukkit.Chunk chunk = player.getWorld().getChunkAt(player.getLocation());
@@ -45,16 +49,7 @@ public class BwTest implements CommandExecutor {
         bedwarsPractice.getPractice().getFinishSchematic()
                 .pasteSchematic(location, bedwarsPractice.getPractice().getPlayers().get(player.getName()));
         sender.sendMessage("Executed");*/
-        double rX = -0.35 + (0.35 + 0.35) * random.nextDouble();
-        double rZ;
-        if(random.nextBoolean()) {
-            rZ = 0.38 + (0.48 - 0.38) * random.nextDouble();
-        } else {
-            rZ = (0.38 + (0.48 - 0.38) * random.nextDouble()) * -1;
-        }
-
-        System.out.println(rX + " - " + rZ);
-        player.setVelocity(new Vector(rX, 0.6333, rZ));
+        player.sendMessage("Y: " + player.getEyeLocation().getY());
         return true;
     }
 }

@@ -2,12 +2,13 @@ package it.thedarksword.bedwarspractice;
 
 import it.thedarksword.bedwarspractice.clipboards.Schematic;
 import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
+import it.thedarksword.bedwarspractice.clutch.sessions.WallClutch;
 import it.thedarksword.bedwarspractice.commands.BedwarsPracticeCommand;
 import it.thedarksword.bedwarspractice.commands.BwTest;
+import it.thedarksword.bedwarspractice.commands.Reset;
+import it.thedarksword.bedwarspractice.commands.Top;
 import it.thedarksword.bedwarspractice.config.ConfigValue;
 import it.thedarksword.bedwarspractice.enchantment.GlowEnchant;
-import it.thedarksword.bedwarspractice.inventories.BridgingSpawnInventory;
-import it.thedarksword.bedwarspractice.inventories.ModeInventory;
 import it.thedarksword.bedwarspractice.listeners.BridgingListener;
 import it.thedarksword.bedwarspractice.listeners.ClutchListener;
 import it.thedarksword.bedwarspractice.listeners.NatureListener;
@@ -20,10 +21,12 @@ import it.thedarksword.bedwarspractice.mysql.MySQLManager;
 import it.thedarksword.bedwarspractice.packets.PacketListener;
 import it.thedarksword.bedwarspractice.scoreboard.BoardsHandler;
 import it.thedarksword.bedwarspractice.scoreboard.NMS;
+import it.thedarksword.bedwarspractice.tasks.TopUpdater;
 import it.thedarksword.bedwarspractice.yaml.Configuration;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -49,9 +52,14 @@ public class BedwarsPractice extends JavaPlugin {
     private Schematic schematic;
 
     private KnockbackClutch.KnockbackClutchTask knockbackClutchTask;
+    private WallClutch.WallClutchTask wallClutchTask;
 
     private Spawns spawns;
     private Inventories inventories;
+
+    private TopUpdater topUpdater;
+
+    private CraftServer craftServer;
 
     @SneakyThrows
     @Override
@@ -77,6 +85,8 @@ public class BedwarsPractice extends JavaPlugin {
             return;
         }
 
+        craftServer = (CraftServer) getServer();
+
         configValue = new ConfigValue(configuration);
 
         mySQLManager = new MySQLManager(configValue,
@@ -90,7 +100,7 @@ public class BedwarsPractice extends JavaPlugin {
         packetListener = new PacketListener(this);
 
         spawns = new Spawns(settings);
-        inventories = new Inventories();
+        inventories = new Inventories(this);
 
         schematic = Schematic.loadSchematic(schematicFile);
 
@@ -101,6 +111,12 @@ public class BedwarsPractice extends JavaPlugin {
 
         knockbackClutchTask = new KnockbackClutch.KnockbackClutchTask();
         knockbackClutchTask.runTaskTimerAsynchronously(this, 2, 2);
+
+        wallClutchTask = new WallClutch.WallClutchTask();
+        wallClutchTask.runTaskTimerAsynchronously(this, 2, 2);
+
+        topUpdater = new TopUpdater(this);
+        topUpdater.runTaskTimerAsynchronously(this, 0, 6000); // 6000 ticks = 5 minutes
 
         registerCommands();
         registerListeners();
@@ -114,6 +130,8 @@ public class BedwarsPractice extends JavaPlugin {
     private void registerCommands() {
         getCommand("bedwarspractice").setExecutor(new BedwarsPracticeCommand(this));
         getCommand("bwtest").setExecutor(new BwTest(this));
+        getCommand("top").setExecutor(new Top(this));
+        getCommand("reset").setExecutor(new Reset(this));
     }
 
     private void registerListeners() {

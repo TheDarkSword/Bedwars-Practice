@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class BoardsHandler {
 
-    private static final String TITLE = ChatColor.YELLOW.toString() + ChatColor.BOLD + "BED WARS PRACTICE";
+    private static final String TITLE = ChatColor.AQUA.toString() + ChatColor.BOLD + "BEDWARS PRACTICE";
 
     private final Map<UUID, ScoreBoard> boards = new ConcurrentHashMap<>();
     @Getter private final BedwarsPractice bedwarsPractice;

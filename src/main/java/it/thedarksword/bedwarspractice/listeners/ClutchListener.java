@@ -5,6 +5,7 @@ import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
 import it.thedarksword.bedwarspractice.abstraction.sessions.clutch.ClutchSession;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -49,9 +50,13 @@ public class ClutchListener implements Listener {
         }
 
         if(session.isRunning()) {
+            Block block = player.getLocation().subtract(0, 1, 0).getBlock();
             if(session.isCheckPointEnabled() &&
-                    player.getLocation().subtract(0, 1, 0).getBlock().getType() == bedwarsPractice.getConfigValue().KNOCKBACK_CHECKPOINT)
-                session.setCheckPoint(player.getLocation());
+                    block.getType() == bedwarsPractice.getConfigValue().KNOCKBACK_CHECKPOINT) {
+                Location checkpoint = block.getLocation().add(0.5, 1, 0.5);
+                checkpoint.setYaw(-90);
+                session.setCheckPoint(checkpoint);
+            }
         } else {
             if(player.getLocation().subtract(0, 1, 0).getBlock().getType() == bedwarsPractice.getConfigValue().KNOCKBACK_START)
                 session.start(player);

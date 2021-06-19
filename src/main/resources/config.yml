@@ -31,6 +31,12 @@ mode:
   lore:
     - "&aCustom Lore"
 
+kbc-difficulty:
+  material: "REDSTONE_COMPARATOR"
+  name: "&2Difficulty"
+  lore:
+    - "&aCustom Lore"
+
 checkpoint:
   enabled:
     material: "INK_SACK"
@@ -66,3 +72,25 @@ clutch:
     materials:
       start: IRON_BLOCK
       checkpoint: DIAMOND_BLOCK
+    win:
+      title:
+        message: "&a{time} secondi"
+        fadeIn: 5
+        duration: 60
+        fadeOut: 20
+      message: "&aCompletato! Ci hai messo {time} secondi"
+      loose:
+        message: "&cHai fallito!"
+  wall:
+    materials:
+      block: IRON_BLOCK
+      checkpoint: DIAMOND_BLOCK
+    win:
+      title:
+        message: "&a{time} secondi"
+        fadeIn: 5
+        duration: 60
+        fadeOut: 20
+      message: "&aCompletato! Ci hai messo {time} secondi"
+      loose:
+        message: "&cHai fallito!"
