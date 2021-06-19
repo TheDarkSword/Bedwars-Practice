@@ -33,11 +33,11 @@ public abstract class ClutchSession extends Session {
     @Getter private boolean running;
     @Getter private float bestTime;
 
-    @Setter @Getter private boolean checkPointEnabled;
-    @Setter @Getter private Location checkPoint;
+    @Setter @Getter protected boolean checkPointEnabled;
+    @Setter @Getter protected Location checkPoint;
 
-    public ClutchSession(BedwarsPractice bedwarsPractice, Player player) {
-        super(SessionType.CLUTCH);
+    public ClutchSession(SessionType sessionType, BedwarsPractice bedwarsPractice, Player player) {
+        super(sessionType);
         this.bedwarsPractice = bedwarsPractice;
         this.player = player;
     }
@@ -80,21 +80,34 @@ public abstract class ClutchSession extends Session {
                 if(hand.getData().getData() == bedwarsPractice.getConfigValue().CHECKPOINT_ENABLED_COLOR.getDyeData()) {
                     player.setItemInHand(bedwarsPractice.getConstantObjects().getCheckpointDisabled());
                     setCheckPointEnabled(false);
+                    setCheckPoint(null);
                 } else {
                     player.setItemInHand(bedwarsPractice.getConstantObjects().getCheckpointEnabled());
                     setCheckPointEnabled(true);
                 }
             } else if (hand.getType() == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
                 bedwarsPractice.getInventories().getModeInventory().open(player);
+            } else if (hand.getType() == bedwarsPractice.getConfigValue().KBC_DIFFICULTY_MATERIAL) {
+                bedwarsPractice.getInventories().getKnockBackClutchDifficultyInventory().open(player);
             }
             return null;
         }
 
-        FakeBlock fakeBlock = new FakeBlock(Material.getMaterial(Item.getId(packet.getItemStack().getItem())),
-                player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), packet.getFace());
+        FakeBlock fakeBlock;
+        try {
+            Material material = Material.getMaterial(Item.getId(packet.getItemStack().getItem()));
+            if(!material.isSolid() &&
+                    material != bedwarsPractice.getConfigValue().SETTINGS_MATERIAL &&
+                    material != bedwarsPractice.getConfigValue().MODE_MATERIAL &&
+                    material != bedwarsPractice.getConfigValue().KBC_DIFFICULTY_MATERIAL) return null;
+            fakeBlock = new FakeBlock(Material.getMaterial(Item.getId(packet.getItemStack().getItem())),
+                    player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), packet.getFace());
+        } catch (NullPointerException e) {
+            return null;
+        }
 
-        if(hand.getType() == bedwarsPractice.getConfigValue().SETTINGS_MATERIAL) {
-            getSettingsInventory().open(player);
+        if (hand.getType() == bedwarsPractice.getConfigValue().KBC_DIFFICULTY_MATERIAL) {
+            bedwarsPractice.getInventories().getKnockBackClutchDifficultyInventory().open(player);
             player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
             return null;
         } else if(hand.getType() == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
@@ -103,8 +116,8 @@ public abstract class ClutchSession extends Session {
             return null;
         }
 
-        Material fromBlock = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).getType();
-        if((fromBlock != bedwarsPractice.getConfigValue().KNOCKBACK_START && fromBlock != Material.AIR) ||
+        //Material fromBlock = player.getWorld().getBlockAt(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).getType();
+        if(/*(fromBlock != bedwarsPractice.getConfigValue().KNOCKBACK_START && fromBlock != Material.AIR) ||*/
                 fakeBlock.getX() <= getSpawn().getX() || fakeBlock.getX() >= getFinishArea().lastX() || !isRunning()) {
             player.sendMessage(bedwarsPractice.getConfigValue().INVALID_PLACE);
             player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
@@ -120,6 +133,10 @@ public abstract class ClutchSession extends Session {
         } else {
             hand.setAmount(hand.getAmount() - 1);
         }
+
+        PacketPlayOutNamedSoundEffect soundEffect = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(Sound.STEP_WOOL),
+                player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1, 1);
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(soundEffect);
 
         return null;
     }
@@ -193,11 +210,11 @@ public abstract class ClutchSession extends Session {
         if(isRunning())
             list.add("Tempo: §b" + Format.decimal1((System.currentTimeMillis() - getSessionStart())/1000f));
         else
-            list.add("Tempo: §bNaN");
+            list.add("Tempo: §b0");
         list.add("  ");
-        list.add("Miglior Tempo: §b" + (bestTime == Float.MAX_VALUE ? "NaN" : bestTime));
+        list.add("Miglior Tempo: §b" + (getBestTime() == Float.MAX_VALUE ? "Nessuno" : getBestTime()));
         list.add("   ");
-        list.add("Modalità: §7" + getType().name());
+        list.add("Modalità: §7" + getType().getName());
         list.add("    ");
         list.add(ChatColor.YELLOW + "play.coralmc.it");
     }

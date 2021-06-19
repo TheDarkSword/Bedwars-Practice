@@ -1,7 +1,5 @@
 package it.thedarksword.bedwarspractice.manager;
 
-import it.thedarksword.bedwarspractice.BedwarsPractice;
-import it.thedarksword.bedwarspractice.clipboards.Cuboid;
 import it.thedarksword.bedwarspractice.utils.location.CloneableLocation;
 import it.thedarksword.bedwarspractice.yaml.Configuration;
 import lombok.Data;
@@ -16,6 +14,7 @@ public class Spawns {
 
     private final Bridging bridging = new Bridging();
     private final KnockbackClutch knockbackClutch = new KnockbackClutch();
+    private final WallClutch wallClutch = new WallClutch();
 
     public Spawns(Configuration settings) {
         this.settings = settings;
@@ -70,6 +69,35 @@ public class Spawns {
                     settings.getInt("finish.2.clutch.knockback.z")
             );
         }
+
+        if(!settings.getString("spawn.clutch.wall.world").isEmpty()) {
+            wallClutch.spawn = new Location(
+                    Bukkit.getWorld(settings.getString("spawn.clutch.wall.world")),
+                    settings.getInt("spawn.clutch.wall.x"),
+                    settings.getInt("spawn.clutch.wall.y"),
+                    settings.getInt("spawn.clutch.wall.z"),
+                    settings.getFloat("spawn.clutch.wall.yaw"),
+                    settings.getFloat("spawn.clutch.wall.pitch")
+            );
+        }
+
+        if(!settings.getString("finish.1.clutch.wall.world").isEmpty()) {
+            wallClutch.finish1 = new Location(
+                    Bukkit.getWorld(settings.getString("finish.1.clutch.wall.world")),
+                    settings.getInt("finish.1.clutch.wall.x"),
+                    settings.getInt("finish.1.clutch.wall.y"),
+                    settings.getInt("finish.1.clutch.wall.z")
+            );
+        }
+
+        if(!settings.getString("finish.2.clutch.wall.world").isEmpty()) {
+            wallClutch.finish2 = new Location(
+                    Bukkit.getWorld(settings.getString("finish.2.clutch.wall.world")),
+                    settings.getInt("finish.2.clutch.wall.x"),
+                    settings.getInt("finish.2.clutch.wall.y"),
+                    settings.getInt("finish.2.clutch.wall.z")
+            );
+        }
     }
 
 
@@ -93,6 +121,15 @@ public class Spawns {
                 settings.set("spawn.clutch.knockback.z", location.getBlockZ());
                 settings.set("spawn.clutch.knockback.yaw", location.getYaw());
                 settings.set("spawn.clutch.knockback.pitch", location.getPitch());
+                break;
+            case "clutchwall":
+                wallClutch.spawn = location;
+                settings.set("spawn.clutch.wall.world", location.getWorld().getName());
+                settings.set("spawn.clutch.wall.x", location.getBlockX());
+                settings.set("spawn.clutch.wall.y", location.getBlockY());
+                settings.set("spawn.clutch.wall.z", location.getBlockZ());
+                settings.set("spawn.clutch.wall.yaw", location.getYaw());
+                settings.set("spawn.clutch.wall.pitch", location.getPitch());
                 break;
             default:
                 return false;
@@ -120,6 +157,21 @@ public class Spawns {
                     settings.set("finish.2.clutch.knockback.z", location.getBlockZ());
                 }
                 break;
+            case "clutchwall":
+                if(first) {
+                    wallClutch.finish1 = location;
+                    settings.set("finish.1.clutch.wall.world", location.getWorld().getName());
+                    settings.set("finish.1.clutch.wall.x", location.getBlockX());
+                    settings.set("finish.1.clutch.wall.y", location.getBlockY());
+                    settings.set("finish.1.clutch.wall.z", location.getBlockZ());
+                } else {
+                    wallClutch.finish2 = location;
+                    settings.set("finish.2.clutch.wall.world", location.getWorld().getName());
+                    settings.set("finish.2.clutch.wall.x", location.getBlockX());
+                    settings.set("finish.2.clutch.wall.y", location.getBlockY());
+                    settings.set("finish.2.clutch.wall.z", location.getBlockZ());
+                }
+                break;
             default:
                 return false;
         }
@@ -136,6 +188,13 @@ public class Spawns {
 
     @Data
     public static class KnockbackClutch {
+        private Location spawn;
+        private Location finish1;
+        private Location finish2;
+    }
+
+    @Data
+    public static class WallClutch {
         private Location spawn;
         private Location finish1;
         private Location finish2;

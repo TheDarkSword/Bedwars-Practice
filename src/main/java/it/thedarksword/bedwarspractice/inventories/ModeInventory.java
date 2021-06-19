@@ -1,7 +1,5 @@
 package it.thedarksword.bedwarspractice.inventories;
 
-import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingConfiguration;
-import it.thedarksword.bedwarspractice.enchantment.GlowEnchant;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,6 +26,11 @@ public class ModeInventory {
         inventory.setItem(11, createItem(11, Material.BED, 1, ChatColor.GREEN + "Bridging", event -> {
             Player player = (Player) event.getWhoClicked();
             player.performCommand("bwp start bridging");
+        }));
+
+        inventory.setItem(13, createItem(13, Material.IRON_BLOCK, 1, ChatColor.GREEN + "Wall Clutch", event -> {
+            Player player = (Player) event.getWhoClicked();
+            player.performCommand("bwp start wallclutch");
         }));
 
         inventory.setItem(15, createItem(15, Material.WOOD_SWORD, 1, ChatColor.GREEN + "Knockback Clutch", event -> {
