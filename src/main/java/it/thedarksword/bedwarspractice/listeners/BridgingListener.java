@@ -4,11 +4,8 @@ import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import net.minecraft.server.v1_8_R3.ItemStack;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,9 +35,8 @@ public class BridgingListener implements Listener {
             Session session = optional.get();
 
             if(session instanceof BridgingSession &&
-                    event.getInventory().equals(session.getSettingsInventory().getInventory())) {
-                //session.getSettingsInventory().getItems().get(event.getSlot()).run(event);
-                session.getSettingsInventory().getItems().computeIfPresent(event.getSlot(),(integer, clickableItem) -> {
+                    event.getInventory().equals(((BridgingSession)session).getSettingsInventory().getInventory())) {
+                ((BridgingSession)session).getSettingsInventory().getItems().computeIfPresent(event.getSlot(),(integer, clickableItem) -> {
                     clickableItem.run(event);
                     return clickableItem;
                 });
@@ -77,13 +73,15 @@ public class BridgingListener implements Listener {
             session.stop(player);
         }
 
+        if(!session.isRunning()) return;
+
         if(session.getFinishArea().isInside(to)){
             session.win(player);
             session.stop(player);
             return;
         }
 
-        if(session.isRunning()) session.movement(from, to);
+        session.movement(from, to);
     }
 
     @EventHandler
