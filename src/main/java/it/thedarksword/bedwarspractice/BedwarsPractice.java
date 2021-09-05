@@ -36,6 +36,10 @@ import java.nio.file.Files;
 @Getter
 public class BedwarsPractice extends JavaPlugin {
 
+    /**
+     * Test rebase master branch
+     */
+
     private Configuration settings;
 
     private ConfigValue configValue;
