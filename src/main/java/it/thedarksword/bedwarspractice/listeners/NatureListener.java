@@ -206,11 +206,11 @@ public class NatureListener implements Listener {
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        Block block = event.getBlockPlaced();
+        /*Block block = event.getBlockPlaced();
         if(block != null){
             bedwarsPractice.getLogger().warning(event.getPlayer().getName() + " ha piazzato " + block.getType().name() + " in " +
                     "(x=" + block.getX() + ",y=" + block.getY() + ",z=" + block.getZ() + ")");
-        }
+        }*/
         if(!event.getPlayer().hasPermission("bwp.admin")) event.setCancelled(true);
     }
 

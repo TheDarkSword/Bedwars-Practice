@@ -25,11 +25,17 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
 
     private final KnockBackClutchConfiguration configuration;
 
-    public KnockbackClutch(BedwarsPractice bedwarsPractice, Player player, KnockBackClutchConfiguration configuration) {
+    public KnockbackClutch(BedwarsPractice bedwarsPractice, Player player, KnockBackClutchConfiguration configuration, boolean checkpointEnabled) {
         super(SessionType.KB_CLUTCH, bedwarsPractice, player);
         this.configuration = configuration;
         setFinishArea(new Cuboid(bedwarsPractice.getSpawns().getKnockbackClutch().getFinish1(),
                 bedwarsPractice.getSpawns().getKnockbackClutch().getFinish2()));
+
+        super.checkPointEnabled = checkpointEnabled;
+    }
+
+    public KnockbackClutch(BedwarsPractice bedwarsPractice, Player player, KnockBackClutchConfiguration configuration) {
+        this(bedwarsPractice, player, configuration, false);
     }
 
     @Override

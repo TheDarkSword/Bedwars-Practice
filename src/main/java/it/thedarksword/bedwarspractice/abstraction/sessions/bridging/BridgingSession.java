@@ -169,7 +169,7 @@ public abstract class BridgingSession extends Session {
             Material material = Material.getMaterial(Item.getId(packet.getItemStack().getItem()));
             if(!material.isSolid() &&
                     material != bedwarsPractice.getConfigValue().SETTINGS_MATERIAL &&
-                    material != bedwarsPractice.getConfigValue().MODE_MATERIAL) return null;
+                    material != bedwarsPractice.getConfigValue().MODE_MATERIAL) return packet;
             fakeBlock = new FakeBlock(Material.getMaterial(Item.getId(packet.getItemStack().getItem())),
                     player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), packet.getFace());
         } catch (NullPointerException e) {

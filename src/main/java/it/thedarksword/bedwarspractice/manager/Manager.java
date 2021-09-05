@@ -41,7 +41,7 @@ public class Manager {
     }
 
     private void switchSession(Player player, Session oldSession, Session newSession) {
-        if(oldSession.isRunning()) player.teleport(oldSession.getSpawn());
+        if(oldSession.isRunning()) player.teleport(newSession.getSpawn());
         oldSession.clearSchematic(player);
         oldSession.stop(player);
         sessions.put(player.getEntityId(), newSession);

@@ -97,9 +97,10 @@ public abstract class ClutchSession extends Session {
         try {
             Material material = Material.getMaterial(Item.getId(packet.getItemStack().getItem()));
             if(!material.isSolid() &&
-                    material != bedwarsPractice.getConfigValue().SETTINGS_MATERIAL &&
                     material != bedwarsPractice.getConfigValue().MODE_MATERIAL &&
-                    material != bedwarsPractice.getConfigValue().KBC_DIFFICULTY_MATERIAL) return null;
+                    material != bedwarsPractice.getConfigValue().KBC_DIFFICULTY_MATERIAL &&
+                    material != bedwarsPractice.getConfigValue().CHECKPOINT_DISABLED_MATERIAL &&
+                    material != bedwarsPractice.getConfigValue().CHECKPOINT_ENABLED_MATERIAL) return packet;
             fakeBlock = new FakeBlock(Material.getMaterial(Item.getId(packet.getItemStack().getItem())),
                     player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), packet.getFace());
         } catch (NullPointerException e) {

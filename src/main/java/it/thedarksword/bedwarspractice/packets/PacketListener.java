@@ -23,19 +23,18 @@ public class PacketListener extends PacketInjector {
             return null;
         }
 
-        if (obj instanceof PacketPlayInBlockPlace && /*player.hasMetadata("session")*/ bedwarsPractice.getManager().session(player).isPresent()) {
-            Optional<Session> optional = bedwarsPractice.getManager().session(player);
-            if (!optional.isPresent()) return obj;
+        Optional<Session> optional;
+
+        if (obj instanceof PacketPlayInBlockPlace && (optional = bedwarsPractice.getManager().session(player)).isPresent()) {
             Session session = optional.get();
             return session.handlePlace(bedwarsPractice, player, (PacketPlayInBlockPlace) obj);
         }
 
-        if (obj instanceof PacketPlayInBlockDig && bedwarsPractice.getManager().session(player).isPresent()) {
-            Optional<Session> optional = bedwarsPractice.getManager().session(player);
-            if (!optional.isPresent()) return obj;
+        if (obj instanceof PacketPlayInBlockDig && (optional = bedwarsPractice.getManager().session(player)).isPresent()) {
             Session session = optional.get();
             return session.handleBreak(bedwarsPractice, player, (PacketPlayInBlockDig) obj);
         }
+
         return obj;
     }
 

@@ -24,7 +24,7 @@ public class KnockBackClutchDifficultyInventory extends BaseInventory {
             Player player = (Player) event.getWhoClicked();
             bedwarsPractice.getManager().session(player).ifPresent(session -> {
                 if(session instanceof KnockbackClutch) {
-                    bedwarsPractice.getManager().newSession(player, new EasyKnockbackClutch(bedwarsPractice, player));
+                    bedwarsPractice.getManager().newSession(player, new EasyKnockbackClutch(bedwarsPractice, player, ((KnockbackClutch) session).isCheckPointEnabled()));
                 }
             });
             player.closeInventory();
@@ -34,7 +34,7 @@ public class KnockBackClutchDifficultyInventory extends BaseInventory {
             Player player = (Player) event.getWhoClicked();
             bedwarsPractice.getManager().session(player).ifPresent(session -> {
                 if(session instanceof KnockbackClutch) {
-                    bedwarsPractice.getManager().newSession(player, new MediumKnockbackClutch(bedwarsPractice, player));
+                    bedwarsPractice.getManager().newSession(player, new MediumKnockbackClutch(bedwarsPractice, player, ((KnockbackClutch) session).isCheckPointEnabled()));
                 }
             });
             player.closeInventory();
@@ -44,15 +44,14 @@ public class KnockBackClutchDifficultyInventory extends BaseInventory {
             Player player = (Player) event.getWhoClicked();
             bedwarsPractice.getManager().session(player).ifPresent(session -> {
                 if(session instanceof KnockbackClutch) {
-                    bedwarsPractice.getManager().newSession(player, new HardKnockbackClutch(bedwarsPractice, player));
+                    bedwarsPractice.getManager().newSession(player, new HardKnockbackClutch(bedwarsPractice, player, ((KnockbackClutch) session).isCheckPointEnabled()));
                 }
             });
             player.closeInventory();
         }));
 
-        inventory.setItem(31, createItem(31, Material.BARRIER, 1, ChatColor.RED + "Chiudi", event -> {
-            event.getWhoClicked().closeInventory();
-        }));
+        inventory.setItem(31, createItem(31, Material.BARRIER, 1, ChatColor.RED + "Chiudi", event ->
+                event.getWhoClicked().closeInventory()));
     }
 
     public void open(Player player) {
