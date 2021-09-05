@@ -243,15 +243,15 @@ public abstract class BridgingSession extends Session {
         //setFakeBlock(fakeBlock);
         Chunk chunk = player.getWorld().getChunkAt(fakeBlock.getX() >> 4, fakeBlock.getZ() >> 4);
         ChunkCoordIntPair chunkCoordIntPair = new ChunkCoordIntPair(chunk.getX(), chunk.getZ());
-        if(fakeBlocks.containsKey(chunkCoordIntPair)) {
-            Set<FakeBlock> set = fakeBlocks.get(chunkCoordIntPair);
+        Set<FakeBlock> set = fakeBlocks.get(chunkCoordIntPair);
+        if(set != null) {
             set.add(fakeBlock);
             /*System.out.println("Chunk: X: " + chunkCoordIntPair.x + "  -  Z: " + chunkCoordIntPair.z);
             System.out.println("X: " + fakeBlock.getX());
             System.out.println("Y: " + fakeBlock.getY());
             System.out.println("Z: " + fakeBlock.getZ());*/
         } else {
-            Set<FakeBlock> set = new ConcurrentSet<>();
+            set = new ConcurrentSet<>();
             set.add(fakeBlock);
             fakeBlocks.put(chunkCoordIntPair, set);
             /*System.out.println("Nuovo Chunk: X: " + chunkCoordIntPair.x + "  -  Z: " + chunkCoordIntPair.z);
