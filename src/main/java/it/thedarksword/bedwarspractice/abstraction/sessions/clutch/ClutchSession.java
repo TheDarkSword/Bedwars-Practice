@@ -163,7 +163,7 @@ public abstract class ClutchSession extends Session {
         setRunning(false);
 
         float time = (System.currentTimeMillis() - getSessionStart())/1000f;
-        if(time < bestTime) {
+        if(time > 2000 && time < bestTime) {
             bedwarsPractice.getMySQLManager().saveRecord(player.getName(), getClass().getSimpleName(), time);
             bestTime = time;
         }

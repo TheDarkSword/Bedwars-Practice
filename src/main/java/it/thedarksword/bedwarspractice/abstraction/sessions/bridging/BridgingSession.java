@@ -390,7 +390,7 @@ public abstract class BridgingSession extends Session {
         player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
         player.getInventory().setItem(3, bedwarsPractice.getConstantObjects().getBlock());
 
-        if(time < bestTime) {
+        if(time > 2000 && time < bestTime) {
             bedwarsPractice.getMySQLManager().saveRecord(player.getName(), getClass().getSimpleName(), time);
             bestTime = time;
         }
