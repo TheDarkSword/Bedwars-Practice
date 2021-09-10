@@ -2,6 +2,7 @@ package it.thedarksword.bedwarspractice.manager;
 
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import lombok.Getter;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -11,7 +12,7 @@ public class ConstantObjects {
 
     private final BedwarsPractice bedwarsPractice;
 
-    private final ItemStack block;
+    //private final ItemStack block;
 
     private final ItemStack settings;
     private final ItemStack mode;
@@ -24,7 +25,7 @@ public class ConstantObjects {
     public ConstantObjects(BedwarsPractice bedwarsPractice) {
         this.bedwarsPractice = bedwarsPractice;
 
-        block = new ItemStack(bedwarsPractice.getConfigValue().BLOCK_MATERIAL, 64);
+        //block = new ItemStack(bedwarsPractice.getConfigValue().BLOCK_MATERIAL, 64);
         settings = new ItemStack(bedwarsPractice.getConfigValue().SETTINGS_MATERIAL, 1);
         ItemMeta meta = settings.getItemMeta();
         meta.setDisplayName(bedwarsPractice.getConfigValue().SETTINGS_NAME);
@@ -62,5 +63,36 @@ public class ConstantObjects {
         meta.setDisplayName(bedwarsPractice.getConfigValue().CHECKPOINT_DISABLED_NAME);
         meta.setLore(bedwarsPractice.getConfigValue().CHECKPOINT_DISABLED_LORE);
         checkpointDisabled.setItemMeta(meta);
+    }
+
+    @SuppressWarnings("deprecation")
+    public enum PlaceableBlock {
+
+        WHITE_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.WHITE.getData())),
+        ORANGE_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.ORANGE.getData())),
+        MAGENTA_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.MAGENTA.getData())),
+        LIGHT_BLUE_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.LIGHT_BLUE.getData())),
+        YELLOW_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.YELLOW.getData())),
+        LIME_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.LIME.getData())),
+        PINK_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.PINK.getData())),
+        GRAY_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.GRAY.getData())),
+        SILVER_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.SILVER.getData())),
+        CYAN_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.CYAN.getData())),
+        PURPLE_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.PURPLE.getData())),
+        BLUE_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.BLUE.getData())),
+        BROWN_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.BROWN.getData())),
+        GREEN_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.GREEN.getData())),
+        RED_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.RED.getData())),
+        BLACK_WOOL(new ItemStack(Material.WOOL, 64, DyeColor.BLACK.getData()));
+
+        private final ItemStack placeableBlock;
+
+        PlaceableBlock(ItemStack placeableBlock) {
+            this.placeableBlock = placeableBlock;
+        }
+
+        public ItemStack get() {
+            return placeableBlock;
+        }
     }
 }

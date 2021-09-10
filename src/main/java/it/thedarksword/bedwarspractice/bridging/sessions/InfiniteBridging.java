@@ -4,6 +4,7 @@ import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingConfiguration;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import it.thedarksword.bedwarspractice.inventories.BridgingSettingsInventory;
+import it.thedarksword.bedwarspractice.manager.ConstantObjects;
 import it.thedarksword.bedwarspractice.utils.formatter.Format;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

@@ -4,6 +4,7 @@ import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingConfiguration;
 import it.thedarksword.bedwarspractice.inventories.BridgingSettingsInventory;
+import it.thedarksword.bedwarspractice.manager.ConstantObjects;
 
 public class ShortStraightBridging extends BridgingSession {
 

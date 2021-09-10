@@ -4,6 +4,7 @@ import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
 import it.thedarksword.bedwarspractice.abstraction.sessions.SessionType;
 import it.thedarksword.bedwarspractice.clipboards.Schematic;
+import it.thedarksword.bedwarspractice.manager.ConstantObjects;
 import it.thedarksword.bedwarspractice.utils.Title;
 import it.thedarksword.bedwarspractice.utils.formatter.Format;
 import it.thedarksword.bedwarspractice.utils.location.FakeBlock;
@@ -36,10 +37,15 @@ public abstract class ClutchSession extends Session {
     @Setter @Getter protected boolean checkPointEnabled;
     @Setter @Getter protected Location checkPoint;
 
-    public ClutchSession(SessionType sessionType, BedwarsPractice bedwarsPractice, Player player) {
+    public ClutchSession(SessionType sessionType, BedwarsPractice bedwarsPractice, Player player, ConstantObjects.PlaceableBlock placeableBlock) {
         super(sessionType);
         this.bedwarsPractice = bedwarsPractice;
         this.player = player;
+        if(placeableBlock == null){
+            setPlaceableBlock(ConstantObjects.PlaceableBlock.WHITE_WOOL);
+        } else {
+            setPlaceableBlock(placeableBlock);
+        }
     }
 
     public abstract void tick();
@@ -52,8 +58,8 @@ public abstract class ClutchSession extends Session {
 
     @Override
     public void init(Player player) {
-        player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
 
         player.getInventory().setItem(7, bedwarsPractice.getConstantObjects().getCheckpointDisabled());
         player.getInventory().setItem(8, bedwarsPractice.getConstantObjects().getMode());
@@ -177,8 +183,8 @@ public abstract class ClutchSession extends Session {
         fakeBlocks.forEach(fakeBlock -> player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));
         fakeBlocks.clear();
 
-        player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
     }
 
     @SuppressWarnings("deprecation")
@@ -193,8 +199,8 @@ public abstract class ClutchSession extends Session {
         fakeBlocks.forEach(fakeBlock -> player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));
         fakeBlocks.clear();
 
-        player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
         PacketPlayOutNamedSoundEffect soundEffect = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(Sound.ENDERMAN_TELEPORT),
                 player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1, 1);
         ((CraftPlayer)player).getHandle().playerConnection.sendPacket(soundEffect);

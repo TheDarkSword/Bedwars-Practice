@@ -8,6 +8,7 @@ import it.thedarksword.bedwarspractice.clipboards.Cuboid;
 import it.thedarksword.bedwarspractice.clipboards.InfiniteCuboid;
 import it.thedarksword.bedwarspractice.clipboards.Schematic;
 import it.thedarksword.bedwarspractice.inventories.BridgingSettingsInventory;
+import it.thedarksword.bedwarspractice.manager.ConstantObjects;
 import it.thedarksword.bedwarspractice.utils.Title;
 import it.thedarksword.bedwarspractice.utils.formatter.Format;
 import it.thedarksword.bedwarspractice.utils.location.FakeBlock;
@@ -93,10 +94,10 @@ public abstract class BridgingSession extends Session {
 
     @Override
     public void init(Player player) {
-        player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(1, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(3, bedwarsPractice.getConstantObjects().getBlock());
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(1, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
+        player.getInventory().setItem(3, getPlaceableBlock().get());
 
         player.getInventory().setItem(7, bedwarsPractice.getConstantObjects().getSettings());
         player.getInventory().setItem(8, bedwarsPractice.getConstantObjects().getMode());
@@ -385,10 +386,10 @@ public abstract class BridgingSession extends Session {
                 .replace("{peekSpeed}", Format.decimal3(peekSpeed)));
         setRunning(false);
 
-        player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(1, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(3, bedwarsPractice.getConstantObjects().getBlock());
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(1, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
+        player.getInventory().setItem(3, getPlaceableBlock().get());
 
         if(time > 2000 && time < bestTime) {
             bedwarsPractice.getMySQLManager().saveRecord(player.getName(), getClass().getSimpleName(), time);
@@ -403,10 +404,10 @@ public abstract class BridgingSession extends Session {
         player.sendMessage(bedwarsPractice.getConfigValue().B_LOOSE_MESSAGE.replace("{peekSpeed}", Format.decimal3(peekSpeed)));
         setRunning(false);
 
-        player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(1, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(3, bedwarsPractice.getConstantObjects().getBlock());
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(1, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
+        player.getInventory().setItem(3, getPlaceableBlock().get());
         PacketPlayOutNamedSoundEffect soundEffect = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(Sound.ENDERMAN_TELEPORT),
                 player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1, 1);
         ((CraftPlayer)player).getHandle().playerConnection.sendPacket(soundEffect);
