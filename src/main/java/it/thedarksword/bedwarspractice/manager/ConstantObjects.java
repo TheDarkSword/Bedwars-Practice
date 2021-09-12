@@ -2,6 +2,7 @@ package it.thedarksword.bedwarspractice.manager;
 
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import lombok.Getter;
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +16,7 @@ public class ConstantObjects {
 
     //private final ItemStack block;
 
+    private final ItemStack leave;
     private final ItemStack settings;
     private final ItemStack mode;
     private final ItemStack kbcDifficulty;
@@ -27,8 +29,12 @@ public class ConstantObjects {
         this.bedwarsPractice = bedwarsPractice;
 
         //block = new ItemStack(bedwarsPractice.getConfigValue().BLOCK_MATERIAL, 64);
+        leave = new ItemStack(Material.BED, 1);
+        ItemMeta meta = leave.getItemMeta();
+        meta.setDisplayName(ChatColor.RED + "Esci");
+        leave.setItemMeta(meta);
         settings = new ItemStack(bedwarsPractice.getConfigValue().SETTINGS_MATERIAL, 1);
-        ItemMeta meta = settings.getItemMeta();
+        meta = settings.getItemMeta();
         meta.setDisplayName(bedwarsPractice.getConfigValue().SETTINGS_NAME);
         meta.setLore(bedwarsPractice.getConfigValue().SETTINGS_LORE);
         settings.setItemMeta(meta);

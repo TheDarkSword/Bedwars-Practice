@@ -3,10 +3,7 @@ package it.thedarksword.bedwarspractice;
 import it.thedarksword.bedwarspractice.clipboards.Schematic;
 import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
 import it.thedarksword.bedwarspractice.clutch.sessions.WallClutch;
-import it.thedarksword.bedwarspractice.commands.BedwarsPracticeCommand;
-import it.thedarksword.bedwarspractice.commands.BwTest;
-import it.thedarksword.bedwarspractice.commands.Reset;
-import it.thedarksword.bedwarspractice.commands.Top;
+import it.thedarksword.bedwarspractice.commands.*;
 import it.thedarksword.bedwarspractice.config.ConfigValue;
 import it.thedarksword.bedwarspractice.enchantment.GlowEnchant;
 import it.thedarksword.bedwarspractice.listeners.BridgingListener;
@@ -146,6 +143,7 @@ public class BedwarsPractice extends JavaPlugin {
         getCommand("bwtest").setExecutor(new BwTest(this));
         getCommand("top").setExecutor(new Top(this));
         getCommand("reset").setExecutor(new Reset(this));
+        getCommand("leave").setExecutor(new Leave(this));
     }
 
     private void registerListeners() {

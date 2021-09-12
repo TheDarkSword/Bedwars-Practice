@@ -15,3 +15,5 @@ commands:
     description: Get the TopList
   reset:
     description: Reset all Records
+  leave:
+    description: Run away from this minigame

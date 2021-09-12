@@ -61,6 +61,7 @@ public abstract class ClutchSession extends Session {
         player.getInventory().setItem(0, getPlaceableBlock().get());
         player.getInventory().setItem(2, getPlaceableBlock().get());
 
+        player.getInventory().setItem(6, bedwarsPractice.getConstantObjects().getLeave());
         player.getInventory().setItem(7, bedwarsPractice.getConstantObjects().getCheckpointDisabled());
         player.getInventory().setItem(8, bedwarsPractice.getConstantObjects().getMode());
     }

@@ -70,6 +70,8 @@ public class NatureListener implements Listener {
                         clutchSession.setCheckPointEnabled(true);
                     }
                 }
+            } else if(hand.getType() == Material.BED) {
+                player.performCommand("leave");
             }
         }
     }
