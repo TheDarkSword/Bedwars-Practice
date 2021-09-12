@@ -1,13 +1,8 @@
 package it.thedarksword.bedwarspractice.inventories;
 
 import it.thedarksword.bedwarspractice.BedwarsPractice;
-import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingConfiguration;
-import it.thedarksword.bedwarspractice.enchantment.GlowEnchant;
 import it.thedarksword.bedwarspractice.manager.ConstantObjects;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 public class BlocksInventory extends BaseInventory {
 
@@ -15,6 +10,7 @@ public class BlocksInventory extends BaseInventory {
         super(bedwarsPractice, "Blocchi", 54);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void init() {
         for(int i = 0; i < ConstantObjects.PlaceableBlock.values().length; i++) {
