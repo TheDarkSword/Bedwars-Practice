@@ -23,7 +23,7 @@ public class Leave implements CommandExecutor {
             return true;
         }
 
-        bedwarsPractice.getDictation().getCommandManager().executeCommand(new SendServerCommand(sender.getName(), "BWLobby"));
+        bedwarsPractice.getDictation().getPlayerManager().sendToServer(sender.getName(), "BWLobby");
         return true;
     }
 }
