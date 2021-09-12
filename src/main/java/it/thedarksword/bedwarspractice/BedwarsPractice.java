@@ -23,10 +23,12 @@ import it.thedarksword.bedwarspractice.scoreboard.BoardsHandler;
 import it.thedarksword.bedwarspractice.scoreboard.NMS;
 import it.thedarksword.bedwarspractice.tasks.TopUpdater;
 import it.thedarksword.bedwarspractice.yaml.Configuration;
+import it.ytnoos.dictation.api.Dictation;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -45,6 +47,8 @@ public class BedwarsPractice extends JavaPlugin {
     private ConfigValue configValue;
 
     private MySQLManager mySQLManager;
+
+    private Dictation dictation;
 
     private PacketListener packetListener;
 
@@ -97,6 +101,12 @@ public class BedwarsPractice extends JavaPlugin {
                 new MySQL(configValue.HOST, configValue.PORT, configValue.DATABASE, configValue.USERNAME, configValue.PASSWORD));
 
         mySQLManager.createTables();
+
+        if(!registerDictation()) {
+            getServer().getLogger().severe("Dictation not Found!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         GlowEnchant.registerGlow();
         NMS.init();
@@ -151,5 +161,12 @@ public class BedwarsPractice extends JavaPlugin {
 
     public void sendMessage(CommandSender sender, String message, String from, String to){
         sender.sendMessage(message.replace(from, to));
+    }
+
+    private boolean registerDictation() {
+        RegisteredServiceProvider<Dictation> provider = getServer().getServicesManager().getRegistration(Dictation.class);
+        if(provider == null) return false;
+        dictation = provider.getProvider();
+        return true;
     }
 }

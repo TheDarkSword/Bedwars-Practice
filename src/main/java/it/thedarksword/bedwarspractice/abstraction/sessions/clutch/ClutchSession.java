@@ -42,9 +42,9 @@ public abstract class ClutchSession extends Session {
         this.bedwarsPractice = bedwarsPractice;
         this.player = player;
         if(placeableBlock == null){
-            setPlaceableBlock(ConstantObjects.PlaceableBlock.WHITE_WOOL);
+            setPlaceableBlock(ConstantObjects.PlaceableBlock.WHITE_WOOL, player);
         } else {
-            setPlaceableBlock(placeableBlock);
+            setPlaceableBlock(placeableBlock, player);
         }
     }
 
@@ -204,6 +204,12 @@ public abstract class ClutchSession extends Session {
         PacketPlayOutNamedSoundEffect soundEffect = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(Sound.ENDERMAN_TELEPORT),
                 player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1, 1);
         ((CraftPlayer)player).getHandle().playerConnection.sendPacket(soundEffect);
+    }
+
+    @Override
+    protected void updatePlaceableBlock(ConstantObjects.PlaceableBlock placeableBlock, Player player) {
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
     }
 
     @Override

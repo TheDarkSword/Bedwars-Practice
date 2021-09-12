@@ -8,11 +8,11 @@ import it.thedarksword.bedwarspractice.utils.location.FakeBlock;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.PacketPlayInBlockDig;
 import net.minecraft.server.v1_8_R3.PacketPlayInBlockPlace;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public abstract class Session implements TrainingSession {
     protected final Set<FakeBlock> fakeBlocks = new ConcurrentSet<>();
     protected final List<FakeBlock> schematicBlocks = new ArrayList<>();
 
-    @Getter private ConstantObjects.PlaceableBlock placeableBlock;
+    @Getter private ConstantObjects.PlaceableBlock placeableBlock = ConstantObjects.PlaceableBlock.WHITE_WOOL;
 
     public abstract PacketPlayInBlockDig handleBreak(Plugin plugin, Player player, PacketPlayInBlockDig packet);
     public abstract PacketPlayInBlockPlace handlePlace(Plugin plugin, Player player, PacketPlayInBlockPlace packet);
@@ -70,11 +70,14 @@ public abstract class Session implements TrainingSession {
         schematicBlocks.clear();
     }
 
-    public void setPlaceableBlock(ConstantObjects.PlaceableBlock placeableBlock) {
+    protected abstract void updatePlaceableBlock(ConstantObjects.PlaceableBlock placeableBlock, Player player);
+
+    public void setPlaceableBlock(ConstantObjects.PlaceableBlock placeableBlock, Player player) {
         if(placeableBlock == null) {
             this.placeableBlock = ConstantObjects.PlaceableBlock.WHITE_WOOL;
         } else {
             this.placeableBlock = placeableBlock;
+            if(player != null) updatePlaceableBlock(placeableBlock, player);
         }
     }
 }

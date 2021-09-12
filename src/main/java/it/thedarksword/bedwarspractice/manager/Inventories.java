@@ -1,6 +1,7 @@
 package it.thedarksword.bedwarspractice.manager;
 
 import it.thedarksword.bedwarspractice.BedwarsPractice;
+import it.thedarksword.bedwarspractice.inventories.BlocksInventory;
 import it.thedarksword.bedwarspractice.inventories.BridgingSpawnInventory;
 import it.thedarksword.bedwarspractice.inventories.KnockBackClutchDifficultyInventory;
 import it.thedarksword.bedwarspractice.inventories.ModeInventory;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Inventories {
 
     private final ModeInventory modeInventory;
+    private final BlocksInventory blocksInventory;
     private final BridgingSpawnInventory bridgingSpawnInventory;
     private final KnockBackClutchDifficultyInventory knockBackClutchDifficultyInventory;
     private final TopsInventory topsInventory;
@@ -27,6 +29,7 @@ public class Inventories {
 
     public Inventories(BedwarsPractice bedwarsPractice) {
         modeInventory = new ModeInventory();
+        blocksInventory = new BlocksInventory(bedwarsPractice);
         bridgingSpawnInventory = new BridgingSpawnInventory();
         knockBackClutchDifficultyInventory = new KnockBackClutchDifficultyInventory(bedwarsPractice);
         topsInventory = new TopsInventory();

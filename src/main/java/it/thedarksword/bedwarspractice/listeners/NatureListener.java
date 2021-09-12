@@ -97,6 +97,11 @@ public class NatureListener implements Listener {
                     clickableItem.run(event);
                     return clickableItem;
                 })));
+            } else if(event.getInventory().equals(bedwarsPractice.getInventories().getBlocksInventory().getInventory())) {
+                bedwarsPractice.getInventories().getBlocksInventory().getItems().computeIfPresent(event.getSlot(), (((integer, clickableItem) -> {
+                    clickableItem.run(event);
+                    return clickableItem;
+                })));
             } else if(event.getInventory().equals(bedwarsPractice.getInventories().getTopsInventory().getInventory())) {
                 bedwarsPractice.getInventories().getTopsInventory().getItems().computeIfPresent(event.getSlot(), (((integer, clickableItem) -> {
                     clickableItem.run(event);

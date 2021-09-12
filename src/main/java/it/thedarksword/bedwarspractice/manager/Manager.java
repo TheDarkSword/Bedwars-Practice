@@ -55,7 +55,7 @@ public class Manager {
         Validate.notNull(player, "Null players can't have training sessions");
         if(sessions.containsKey(player.getEntityId())) {
             Session oldSession = sessions.get(player.getEntityId());
-            session.setPlaceableBlock(oldSession.getPlaceableBlock());
+            session.setPlaceableBlock(oldSession.getPlaceableBlock(), player);
             if(oldSession.getClass().equals(session.getClass())) return;
             if(oldSession.getClass().getSuperclass().equals(session.getClass().getSuperclass()) &&
                     (oldSession instanceof BridgingSession || oldSession instanceof KnockbackClutch)) {

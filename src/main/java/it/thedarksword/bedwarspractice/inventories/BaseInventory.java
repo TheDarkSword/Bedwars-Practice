@@ -31,14 +31,23 @@ public abstract class BaseInventory {
     public abstract void init();
 
     protected ItemStack createItem(int slot, Material material, int amount, String name, Consumer<InventoryClickEvent> consumer, String... lore) {
-        return createItem(slot, material, amount, name, false, consumer, lore);
+        return createItem(slot, material, amount, (byte)0, name, false, consumer, lore);
+    }
+
+    protected ItemStack createItem(int slot, Material material, int amount, byte data, String name, Consumer<InventoryClickEvent> consumer, String... lore) {
+        return createItem(slot, material, amount, data, name, false, consumer, lore);
     }
 
     protected ItemStack createItem(int slot, Material material, int amount, String name, boolean glowing, Consumer<InventoryClickEvent> consumer,
                                    String... lore) {
-        ItemStack item = new ItemStack(material, amount);
+        return createItem(slot, material, amount, (byte) 0, name, false, consumer, lore);
+    }
+
+    protected ItemStack createItem(int slot, Material material, int amount, byte data, String name, boolean glowing, Consumer<InventoryClickEvent> consumer,
+                                   String... lore) {
+        ItemStack item = new ItemStack(material, amount, data);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
+        if(name != null) meta.setDisplayName(name);
         if(lore.length != 0) meta.setLore(Arrays.asList(lore));
         item.setItemMeta(meta);
         if(glowing) GlowEnchant.addGlow(item);

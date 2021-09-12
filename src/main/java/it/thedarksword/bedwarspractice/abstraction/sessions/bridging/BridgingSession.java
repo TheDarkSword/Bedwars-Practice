@@ -414,6 +414,14 @@ public abstract class BridgingSession extends Session {
     }
 
     @Override
+    protected void updatePlaceableBlock(ConstantObjects.PlaceableBlock placeableBlock, Player player) {
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(1, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
+        player.getInventory().setItem(3, getPlaceableBlock().get());
+    }
+
+    @Override
     public void sidebarTemplate(List<String> list) {
         list.add(ChatColor.GRAY + Format.now());
         /*if (isRunning()) {
