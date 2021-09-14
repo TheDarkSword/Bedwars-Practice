@@ -149,10 +149,14 @@ public abstract class ClutchSession extends Session {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void stop(Player player) {
         setSessionStart(-1L);
         setRunning(false);
+
+        fakeBlocks.forEach(fakeBlock -> player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));
+        fakeBlocks.clear();
     }
 
     @Override
@@ -161,7 +165,6 @@ public abstract class ClutchSession extends Session {
         setRunning(true);
     }
 
-    @SuppressWarnings("deprecation")
     @SneakyThrows
     @Override
     public void win(Player player) {
@@ -181,14 +184,10 @@ public abstract class ClutchSession extends Session {
                 bedwarsPractice.getConfigValue().KBC_duration, bedwarsPractice.getConfigValue().KBC_fadeOut);
         player.sendMessage(bedwarsPractice.getConfigValue().KBC_WIN_MESSAGE.replace("{time}", timeFormatted));
 
-        fakeBlocks.forEach(fakeBlock -> player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));
-        fakeBlocks.clear();
-
         player.getInventory().setItem(0, getPlaceableBlock().get());
         player.getInventory().setItem(2, getPlaceableBlock().get());
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void loose(Player player) {
         player.teleport(getSpawn());
@@ -196,9 +195,6 @@ public abstract class ClutchSession extends Session {
             setRunning(false);
             player.sendMessage(bedwarsPractice.getConfigValue().KBC_LOOSE_MESSAGE);
         }
-
-        fakeBlocks.forEach(fakeBlock -> player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));
-        fakeBlocks.clear();
 
         player.getInventory().setItem(0, getPlaceableBlock().get());
         player.getInventory().setItem(2, getPlaceableBlock().get());
