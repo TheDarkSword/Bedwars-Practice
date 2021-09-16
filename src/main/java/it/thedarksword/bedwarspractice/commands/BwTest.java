@@ -24,7 +24,7 @@ public class BwTest implements CommandExecutor {
 
     private final BedwarsPractice bedwarsPractice;
     private final SecureRandom random = new SecureRandom();
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;

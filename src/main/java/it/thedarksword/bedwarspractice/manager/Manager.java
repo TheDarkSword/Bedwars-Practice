@@ -26,7 +26,7 @@ public class Manager {
         sessions.computeIfPresent(player.getEntityId(), (integer, session) -> {
             session.stop(player);
             session.clearSchematic(player);
-            bedwarsPractice.getPacketListener().removePlayer(player);
+            //bedwarsPractice.getPacketListener().removePlayer(player);
             return sessions.remove(player.getEntityId());
         });
         /*Optional.of(sessions.get(player.getEntityId())).ifPresent(session -> {

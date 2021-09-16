@@ -18,6 +18,7 @@ public class Stop extends Module {
     public void execute(Player player, String[] args) {
         if(player.hasMetadata("session")) {
             bedwarsPractice.getManager().endSession(player);
+            bedwarsPractice.getPacketListener().removePlayer(player);
             player.removeMetadata("session", bedwarsPractice);
         }
     }
