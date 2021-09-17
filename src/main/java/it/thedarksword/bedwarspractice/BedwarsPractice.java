@@ -79,6 +79,7 @@ public class BedwarsPractice extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
+            getServer().setWhitelist(true);
             return;
         }
 
@@ -87,6 +88,7 @@ public class BedwarsPractice extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
+            getServer().setWhitelist(true);
             return;
         }
 
@@ -102,6 +104,7 @@ public class BedwarsPractice extends JavaPlugin {
         if(!registerDictation()) {
             getServer().getLogger().severe("Dictation not Found!");
             getServer().getPluginManager().disablePlugin(this);
+            getServer().setWhitelist(true);
             return;
         }
 
