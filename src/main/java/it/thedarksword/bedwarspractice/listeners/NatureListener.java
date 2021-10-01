@@ -71,7 +71,8 @@ public class NatureListener implements Listener {
                     }
                 }
             } else if(hand.getType() == Material.BED) {
-                player.performCommand("leave");
+                bedwarsPractice.getDictation().getPlayerManager().sendToServer(player.getName(), "BWLobby");
+                event.setCancelled(true);
             }
         }
     }

@@ -162,6 +162,8 @@ public abstract class BridgingSession extends Session {
                 getSettingsInventory().open(player);
             } else if (hand.getType() == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
                 bedwarsPractice.getInventories().getModeInventory().open(player);
+            } else if (hand.getType() == Material.BED) {
+                bedwarsPractice.getDictation().getPlayerManager().sendToServer(player.getName(), "BWLobby");
             }
             return null;
         }
@@ -170,8 +172,8 @@ public abstract class BridgingSession extends Session {
         try {
             Material material = Material.getMaterial(Item.getId(packet.getItemStack().getItem()));
             if(!material.isSolid() &&
-                    material != bedwarsPractice.getConfigValue().SETTINGS_MATERIAL &&
-                    material != bedwarsPractice.getConfigValue().MODE_MATERIAL) return packet;
+                    (material != bedwarsPractice.getConfigValue().SETTINGS_MATERIAL &&
+                    material != bedwarsPractice.getConfigValue().MODE_MATERIAL)) return packet;
             fakeBlock = new FakeBlock(Material.getMaterial(Item.getId(packet.getItemStack().getItem())),
                     player.getWorld(), blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), packet.getFace());
         } catch (NullPointerException e) {
@@ -392,7 +394,7 @@ public abstract class BridgingSession extends Session {
         player.getInventory().setItem(2, getPlaceableBlock().get());
         player.getInventory().setItem(3, getPlaceableBlock().get());
 
-        if(time > 2000 && time < bestTime) {
+        if(time > 2 && time < bestTime) {
             bedwarsPractice.getMySQLManager().saveRecord(player.getName(), getClass().getSimpleName(), time);
             bestTime = time;
         }

@@ -96,6 +96,8 @@ public abstract class ClutchSession extends Session {
                 bedwarsPractice.getInventories().getModeInventory().open(player);
             } else if (hand.getType() == bedwarsPractice.getConfigValue().KBC_DIFFICULTY_MATERIAL) {
                 bedwarsPractice.getInventories().getKnockBackClutchDifficultyInventory().open(player);
+            } else if (hand.getType() == Material.BED) {
+                bedwarsPractice.getDictation().getPlayerManager().sendToServer(player.getName(), "BWLobby");
             }
             return null;
         }
@@ -173,7 +175,7 @@ public abstract class ClutchSession extends Session {
         setRunning(false);
 
         float time = (System.currentTimeMillis() - getSessionStart())/1000f;
-        if(time > 2000 && time < bestTime) {
+        if(time > 2 && time < bestTime) {
             bedwarsPractice.getMySQLManager().saveRecord(player.getName(), getClass().getSimpleName(), time);
             bestTime = time;
         }
