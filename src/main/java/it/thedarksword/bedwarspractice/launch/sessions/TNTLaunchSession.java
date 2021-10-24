@@ -1,25 +1,72 @@
 package it.thedarksword.bedwarspractice.launch.sessions;
 
+import io.netty.util.internal.ConcurrentSet;
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.SessionType;
 import it.thedarksword.bedwarspractice.abstraction.sessions.launch.LaunchSession;
+import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
 import it.thedarksword.bedwarspractice.utils.location.FakeBlock;
 import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
+import java.util.Objects;
+import java.util.Set;
 
-public class TNTLaunchSession extends LaunchSession {
+public class TNTLaunchSession extends LaunchSession implements Comparable<TNTLaunchSession> {
+
+    private int tntId;
+    private long lastTNT;
+    private Location tntLocation;
 
     public TNTLaunchSession(BedwarsPractice bedwarsPractice, Player player) {
         super(SessionType.LAUNCH, bedwarsPractice, player, Material.TNT);
+    }
+
+    private void tick() {
+        if(System.currentTimeMillis() - lastTNT >= 2250) {
+            Vector vector = player.getLocation().add(0.0, 1.0, 0.0).toVector().subtract(tntLocation.toVector());
+            double l = vector.length();
+            vector.normalize();
+            vector.multiply(4.0 / l);
+
+            player.setVelocity(vector.divide(new Vector(1, 7, 1)));
+
+            PacketPlayOutNamedSoundEffect soundEffect = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(Sound.EXPLODE),
+                    tntLocation.getX(), tntLocation.getY(), tntLocation.getZ(), 1, 1);
+            PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(tntId);
+
+            PlayerConnection playerConnection = ((CraftPlayer)player).getHandle().playerConnection;
+            playerConnection.sendPacket(destroy);
+            playerConnection.sendPacket(soundEffect);
+
+            lastTNT = Long.MAX_VALUE;
+        }
+    }
+
+    @Override
+    public void start(Player player) {
+        super.start(player);
+        bedwarsPractice.getTntLaunchTask().addTask(this);
+    }
+
+    @Override
+    public void stop(Player player) {
+        super.stop(player);
+        bedwarsPractice.getTntLaunchTask().removeTask(this);
     }
 
     @SneakyThrows
@@ -52,7 +99,11 @@ public class TNTLaunchSession extends LaunchSession {
             return null;
         }
 
-        if(hand.getType() == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
+        if(hand.getType() == bedwarsPractice.getConfigValue().LAUNCH_SETTINGS_MATERIAL) {
+            bedwarsPractice.getInventories().getLaunchSettings().open(player);
+            player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
+            return null;
+        } else if(hand.getType() == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
             bedwarsPractice.getInventories().getModeInventory().open(player);
             player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0);
             return null;
@@ -82,13 +133,32 @@ public class TNTLaunchSession extends LaunchSession {
         Object tntPrimed = constructor.newInstance(location, ((CraftWorld)player.getWorld()).getHandle(), location.getX(), location.getY(), location.getZ(), entityPlayer);*/
         /*EntityTNTPrimed tntPrimed = new EntityTNTPrimed(location, ((CraftWorld)player.getWorld()).getHandle(),
                 location.getX(), location.getY(), location.getZ(), entityPlayer);*/
-        /*EntityTNTPrimed tntPrimed = new EntityTNTPrimed(worldServer);
+        EntityTNTPrimed tntPrimed = new EntityTNTPrimed(worldServer);
         tntPrimed.setPosition(location.getX(), location.getY(), location.getZ());
         tntPrimed.setPositionRotation(location.getX() + 0.5, location.getY(), location.getZ() + 0.5, 0, 0);
-        tntPrimed.fuseTicks = 80;
-        worldServer.addEntity(tntPrimed);*/
-        /*PacketPlayOutSpawnEntity spawnPacket = new PacketPlayOutSpawnEntity(tntPrimed, 1);
-        entityPlayer.playerConnection.sendPacket(spawnPacket);*/
+        tntPrimed.fuseTicks = 45;
+        tntPrimed.yield = 3;
+
+        //NBTTagCompound compound = new NBTTagCompound();
+        //compound.setByte("Fuse", (byte) 45);
+        tntId = tntPrimed.getId();
+        lastTNT = System.currentTimeMillis();
+        tntLocation = location;
+
+        /*bedwarsPractice.getServer().getScheduler().runTask(bedwarsPractice, () -> {
+            TNTPrimed primed = player.getWorld().spawn(location, TNTPrimed.class);
+            primed.setFuseTicks(45);
+            primed.setYield(4);
+            System.out.println("Entity ID: " + primed.getEntityId());
+        });*/
+
+
+        PacketPlayOutSpawnEntity spawnPacket = new PacketPlayOutSpawnEntity(tntPrimed, 50);
+        //PacketPlayOutUpdateEntityNBT nbtPacket = new PacketPlayOutUpdateEntityNBT(tntPrimed.getId(), compound);
+        entityPlayer.playerConnection.sendPacket(spawnPacket);
+        //entityPlayer.playerConnection.sendPacket(nbtPacket);
+        /*worldServer.createExplosion(tntPrimed, tntPrimed.locX, tntPrimed.locY + (double)(tntPrimed.length / 2.0F),
+                tntPrimed.locZ, tntPrimed.yield, false, true);*/
         //getPlaced().increment();
 
         if (hand.getAmount() == 1) {
@@ -102,5 +172,32 @@ public class TNTLaunchSession extends LaunchSession {
         ((CraftPlayer)player).getHandle().playerConnection.sendPacket(soundEffect);*/
 
         return null;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(player.getName(), player.getEntityId());
+    }
+
+    @Override
+    public int compareTo(@NotNull TNTLaunchSession o) {
+        return getPlayer().getName().compareTo(o.getPlayer().getName());
+    }
+
+    public static class TNTLaunchTask extends BukkitRunnable {
+        private final Set<TNTLaunchSession> tntLaunchSessions = new ConcurrentSet<>();
+
+        @Override
+        public void run() {
+            tntLaunchSessions.forEach(TNTLaunchSession::tick);
+        }
+
+        public void addTask(TNTLaunchSession tntLaunchSession) {
+            tntLaunchSessions.add(tntLaunchSession);
+        }
+
+        public void removeTask(TNTLaunchSession tntLaunchSession) {
+            tntLaunchSessions.remove(tntLaunchSession);
+        }
     }
 }
