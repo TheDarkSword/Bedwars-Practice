@@ -6,6 +6,7 @@ import it.thedarksword.bedwarspractice.clutch.sessions.WallClutch;
 import it.thedarksword.bedwarspractice.commands.*;
 import it.thedarksword.bedwarspractice.config.ConfigValue;
 import it.thedarksword.bedwarspractice.enchantment.GlowEnchant;
+import it.thedarksword.bedwarspractice.launch.sessions.TNTLaunchSession;
 import it.thedarksword.bedwarspractice.listeners.BridgingListener;
 import it.thedarksword.bedwarspractice.listeners.ClutchListener;
 import it.thedarksword.bedwarspractice.listeners.LaunchListener;
@@ -55,6 +56,7 @@ public class BedwarsPractice extends JavaPlugin {
 
     private KnockbackClutch.KnockbackClutchTask knockbackClutchTask;
     private WallClutch.WallClutchTask wallClutchTask;
+    private TNTLaunchSession.TNTLaunchTask tntLaunchTask;
 
     private Spawns spawns;
     private Inventories inventories;
@@ -125,6 +127,9 @@ public class BedwarsPractice extends JavaPlugin {
 
         wallClutchTask = new WallClutch.WallClutchTask();
         wallClutchTask.runTaskTimerAsynchronously(this, 2, 2);
+
+        tntLaunchTask = new TNTLaunchSession.TNTLaunchTask();
+        tntLaunchTask.runTaskTimerAsynchronously(this, 2, 2);
 
         topUpdater = new TopUpdater(this);
         topUpdater.runTaskTimerAsynchronously(this, 0, 6000); // 6000 ticks = 5 minutes

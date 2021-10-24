@@ -54,7 +54,8 @@ public class LaunchListener implements Listener {
         }
 
         if(session.isRunning()) {
-            if(player.getLocation().subtract(0, 1, 0).getBlock().getType() == Material.GOLD_BLOCK){
+            if(player.getLocation().getX() >= bedwarsPractice.getConfigValue().LAUNCH_START_OFFSET + session.getSpawn().getX() &&
+                    player.getLocation().subtract(0, 1, 0).getBlock().getType() == Material.GOLD_BLOCK){
                 session.win(player);
                 session.stop(player);
             }

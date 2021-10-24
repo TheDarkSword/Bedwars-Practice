@@ -161,10 +161,10 @@ public class LaunchSession extends Session {
     @SneakyThrows
     @Override
     public void win(Player player) {
+        int distance = player.getLocation().getBlockX() - (bedwarsPractice.getConfigValue().LAUNCH_START_OFFSET + getSpawn().getBlockX());
+
         player.teleport(getSpawn());
         setRunning(false);
-
-        double distance = player.getLocation().getX() - bedwarsPractice.getConfigValue().LAUNCH_START_OFFSET;
         if(distance > bestDistance) {
             bedwarsPractice.getMySQLManager().saveRecord(player.getName(), getClass().getSimpleName(), distance);
             bestDistance = distance;

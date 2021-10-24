@@ -101,7 +101,7 @@ launch:
     name: "&2Impostazioni"
     lore:
       - "&9Scegli TNT o Fireball"
-  start-offset: 5 #blocks from spawn
+  start-offset: 9 #blocks from spawn
   win:
     title:
       message: "&a{distance} blocchi"
