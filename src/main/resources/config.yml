@@ -94,3 +94,20 @@ clutch:
       message: "&aCompletato! Ci hai messo {time} secondi"
       loose:
         message: "&cHai fallito!"
+
+launch:
+  settings:
+    material: "REDSTONE_COMPARATOR"
+    name: "&2Impostazioni"
+    lore:
+      - "&9Scegli TNT o Fireball"
+  start-offset: 5 #blocks from spawn
+  win:
+    title:
+      message: "&a{distance} blocchi"
+      fadeIn: 5
+      duration: 60
+      fadeOut: 20
+    message: "&aCompletato! Hai percorso {distance} blocchi"
+    loose:
+      message: "&cHai fallito!"

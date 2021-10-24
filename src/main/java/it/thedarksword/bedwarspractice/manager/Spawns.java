@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 @Data
 public class Spawns {
@@ -15,6 +16,7 @@ public class Spawns {
     private final Bridging bridging = new Bridging();
     private final KnockbackClutch knockbackClutch = new KnockbackClutch();
     private final WallClutch wallClutch = new WallClutch();
+    private final Launch launch = new Launch();
 
     public Spawns(Configuration settings) {
         this.settings = settings;
@@ -98,6 +100,18 @@ public class Spawns {
                     settings.getInt("finish.2.clutch.wall.z")
             );
         }
+
+        if(!settings.getString("spawn.launch.world").isEmpty()) {
+            launch.spawn = new Location(
+                    Bukkit.getWorld(settings.getString("spawn.launch.world")),
+                    settings.getInt("spawn.launch.x"),
+                    settings.getInt("spawn.launch.y"),
+                    settings.getInt("spawn.launch.z"),
+                    settings.getFloat("spawn.launch.yaw"),
+                    settings.getFloat("spawn.launch.pitch")
+            );
+            launch.finish = Material.GOLD_BLOCK;
+        }
     }
 
 
@@ -130,6 +144,15 @@ public class Spawns {
                 settings.set("spawn.clutch.wall.z", location.getBlockZ());
                 settings.set("spawn.clutch.wall.yaw", location.getYaw());
                 settings.set("spawn.clutch.wall.pitch", location.getPitch());
+                break;
+            case "launch":
+                launch.spawn = location;
+                settings.set("spawn.launch.world", location.getWorld().getName());
+                settings.set("spawn.launch.x", location.getBlockX());
+                settings.set("spawn.launch.y", location.getBlockY());
+                settings.set("spawn.launch.z", location.getBlockZ());
+                settings.set("spawn.launch.yaw", location.getYaw());
+                settings.set("spawn.launch.pitch", location.getPitch());
                 break;
             default:
                 return false;
@@ -172,6 +195,8 @@ public class Spawns {
                     settings.set("finish.2.clutch.wall.z", location.getBlockZ());
                 }
                 break;
+            case "launch":
+
             default:
                 return false;
         }
@@ -198,5 +223,11 @@ public class Spawns {
         private Location spawn;
         private Location finish1;
         private Location finish2;
+    }
+
+    @Data
+    public static class Launch {
+        private Location spawn;
+        private Material finish;
     }
 }

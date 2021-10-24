@@ -53,6 +53,10 @@ public class ConfigValue {
     public final String CHECKPOINT_DISABLED_NAME;
     public final List<String> CHECKPOINT_DISABLED_LORE;
 
+    public final Material LAUNCH_SETTINGS_MATERIAL;
+    public final String LAUNCH_SETTINGS_NAME;
+    public final List<String> LAUNCH_SETTINGS_LORE;
+
     //Games
     public final float MIN_Y;
 
@@ -86,6 +90,15 @@ public class ConfigValue {
     public final String WC_WIN_MESSAGE;
     public final String WC_LOOSE_MESSAGE;
     public final float WC_MAX_Y;
+
+    //Launch
+    public final int LAUNCH_START_OFFSET;
+    public final String LAUNCH_WIN_TITLE;
+    public final int LAUNCH_fadeIn;
+    public final int LAUNCH_duration;
+    public final int LAUNCH_fadeOut;
+    public final String LAUNCH_WIN_MESSAGE;
+    public final String LAUNCH_LOOSE_MESSAGE;
 
     public ConfigValue(Configuration configuration) {
         this.configuration = configuration;
@@ -126,6 +139,10 @@ public class ConfigValue {
         CHECKPOINT_DISABLED_NAME = getTranslated(configuration.getString("checkpoint.disabled.name"));
         CHECKPOINT_DISABLED_LORE = getTranslated(configuration.getStringList("checkpoint.disabled.lore"));
 
+        LAUNCH_SETTINGS_MATERIAL = Material.getMaterial(configuration.getString("launch.settings.material"));
+        LAUNCH_SETTINGS_NAME = getTranslated(configuration.getString("launch.settings.name"));
+        LAUNCH_SETTINGS_LORE = getTranslated(configuration.getStringList("launch.settings.lore"));
+
         MIN_Y = configuration.getFloat("games.min-y");
 
         FINISH_Y = configuration.getFloat("bridging.finish-y");
@@ -155,6 +172,14 @@ public class ConfigValue {
         WC_WIN_MESSAGE = getTranslated(configuration.getString("clutch.wall.win.message"));
         WC_LOOSE_MESSAGE = getTranslated(configuration.getString("clutch.wall.loose.message"));
         WC_MAX_Y = configuration.getFloat("clutch.wall.max-y");
+
+        LAUNCH_START_OFFSET = configuration.getInt("launch.start-offset");
+        LAUNCH_WIN_TITLE = getTranslated(configuration.getString("launch.win.title.message"));
+        LAUNCH_fadeIn = configuration.getInt("launch.win.title.fadeIn");
+        LAUNCH_duration = configuration.getInt("launch.win.title.duration");
+        LAUNCH_fadeOut = configuration.getInt("launch.win.title.fadeOut");
+        LAUNCH_WIN_MESSAGE = getTranslated(configuration.getString("launch.win.message"));
+        LAUNCH_LOOSE_MESSAGE = getTranslated(configuration.getString("launch.loose.message"));
     }
 
     private String getTranslated(String string) {

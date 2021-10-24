@@ -8,6 +8,7 @@ import it.thedarksword.bedwarspractice.config.ConfigValue;
 import it.thedarksword.bedwarspractice.enchantment.GlowEnchant;
 import it.thedarksword.bedwarspractice.listeners.BridgingListener;
 import it.thedarksword.bedwarspractice.listeners.ClutchListener;
+import it.thedarksword.bedwarspractice.listeners.LaunchListener;
 import it.thedarksword.bedwarspractice.listeners.NatureListener;
 import it.thedarksword.bedwarspractice.manager.ConstantObjects;
 import it.thedarksword.bedwarspractice.manager.Inventories;
@@ -101,12 +102,12 @@ public class BedwarsPractice extends JavaPlugin {
 
         mySQLManager.createTables();
 
-        if(!registerDictation()) {
+        /*if(!registerDictation()) {
             getServer().getLogger().severe("Dictation not Found!");
             getServer().getPluginManager().disablePlugin(this);
             getServer().setWhitelist(true);
             return;
-        }
+        }*/
 
         GlowEnchant.registerGlow();
         NMS.init();
@@ -154,6 +155,7 @@ public class BedwarsPractice extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new NatureListener(this), this);
         getServer().getPluginManager().registerEvents(new BoardsHandler.BoardsListener(boardsHandler), this);
         getServer().getPluginManager().registerEvents(new ClutchListener(this), this);
+        getServer().getPluginManager().registerEvents(new LaunchListener(this), this);
     }
 
     public void sendMessage(CommandSender sender, String message){

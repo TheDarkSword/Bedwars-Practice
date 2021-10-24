@@ -4,7 +4,7 @@ author: TheDarkSword
 main: it.thedarksword.bedwarspractice.BedwarsPractice
 description: Just a BedwarsPractice Plugin
 softdepend: [Multiverse-Core]
-depend: [Dictation]
+#depend: [Dictation]
 
 commands:
   bedwarspractice:

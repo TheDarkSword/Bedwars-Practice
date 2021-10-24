@@ -24,6 +24,8 @@ public class ConstantObjects {
     private final ItemStack checkpointEnabled;
     private final ItemStack checkpointDisabled;
 
+    private final ItemStack launchItemSettings;
+
     @SuppressWarnings("deprecation")
     public ConstantObjects(BedwarsPractice bedwarsPractice) {
         this.bedwarsPractice = bedwarsPractice;
@@ -70,6 +72,12 @@ public class ConstantObjects {
         meta.setDisplayName(bedwarsPractice.getConfigValue().CHECKPOINT_DISABLED_NAME);
         meta.setLore(bedwarsPractice.getConfigValue().CHECKPOINT_DISABLED_LORE);
         checkpointDisabled.setItemMeta(meta);
+
+        launchItemSettings = new ItemStack(bedwarsPractice.getConfigValue().LAUNCH_SETTINGS_MATERIAL);
+        meta = launchItemSettings.getItemMeta();
+        meta.setDisplayName(bedwarsPractice.getConfigValue().LAUNCH_SETTINGS_NAME);
+        meta.setLore(bedwarsPractice.getConfigValue().LAUNCH_SETTINGS_LORE);
+        launchItemSettings.setItemMeta(meta);
     }
 
     @SuppressWarnings("deprecation")
