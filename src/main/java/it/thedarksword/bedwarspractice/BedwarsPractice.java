@@ -3,14 +3,12 @@ package it.thedarksword.bedwarspractice;
 import it.thedarksword.bedwarspractice.clipboards.Schematic;
 import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
 import it.thedarksword.bedwarspractice.clutch.sessions.WallClutch;
-import it.thedarksword.bedwarspractice.commands.BedwarsPracticeCommand;
-import it.thedarksword.bedwarspractice.commands.BwTest;
-import it.thedarksword.bedwarspractice.commands.Reset;
-import it.thedarksword.bedwarspractice.commands.Top;
+import it.thedarksword.bedwarspractice.commands.*;
 import it.thedarksword.bedwarspractice.config.ConfigValue;
 import it.thedarksword.bedwarspractice.enchantment.GlowEnchant;
 import it.thedarksword.bedwarspractice.listeners.BridgingListener;
 import it.thedarksword.bedwarspractice.listeners.ClutchListener;
+import it.thedarksword.bedwarspractice.listeners.LaunchListener;
 import it.thedarksword.bedwarspractice.listeners.NatureListener;
 import it.thedarksword.bedwarspractice.manager.ConstantObjects;
 import it.thedarksword.bedwarspractice.manager.Inventories;
@@ -23,10 +21,12 @@ import it.thedarksword.bedwarspractice.scoreboard.BoardsHandler;
 import it.thedarksword.bedwarspractice.scoreboard.NMS;
 import it.thedarksword.bedwarspractice.tasks.TopUpdater;
 import it.thedarksword.bedwarspractice.yaml.Configuration;
+import it.ytnoos.dictation.api.Dictation;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -41,6 +41,8 @@ public class BedwarsPractice extends JavaPlugin {
     private ConfigValue configValue;
 
     private MySQLManager mySQLManager;
+
+    private Dictation dictation;
 
     private PacketListener packetListener;
 
@@ -74,6 +76,7 @@ public class BedwarsPractice extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
+            getServer().setWhitelist(true);
             return;
         }
 
@@ -82,6 +85,7 @@ public class BedwarsPractice extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
+            getServer().setWhitelist(true);
             return;
         }
 
@@ -93,6 +97,13 @@ public class BedwarsPractice extends JavaPlugin {
                 new MySQL(configValue.HOST, configValue.PORT, configValue.DATABASE, configValue.USERNAME, configValue.PASSWORD));
 
         mySQLManager.createTables();
+
+        /*if(!registerDictation()) {
+            getServer().getLogger().severe("Dictation not Found!");
+            getServer().getPluginManager().disablePlugin(this);
+            getServer().setWhitelist(true);
+            return;
+        }*/
 
         GlowEnchant.registerGlow();
         NMS.init();
@@ -132,6 +143,7 @@ public class BedwarsPractice extends JavaPlugin {
         getCommand("bwtest").setExecutor(new BwTest(this));
         getCommand("top").setExecutor(new Top(this));
         getCommand("reset").setExecutor(new Reset(this));
+        getCommand("leave").setExecutor(new Leave(this));
     }
 
     private void registerListeners() {
@@ -139,6 +151,7 @@ public class BedwarsPractice extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new NatureListener(this), this);
         getServer().getPluginManager().registerEvents(new BoardsHandler.BoardsListener(boardsHandler), this);
         getServer().getPluginManager().registerEvents(new ClutchListener(this), this);
+        getServer().getPluginManager().registerEvents(new LaunchListener(this), this);
     }
 
     public void sendMessage(CommandSender sender, String message){
@@ -147,5 +160,12 @@ public class BedwarsPractice extends JavaPlugin {
 
     public void sendMessage(CommandSender sender, String message, String from, String to){
         sender.sendMessage(message.replace(from, to));
+    }
+
+    private boolean registerDictation() {
+        RegisteredServiceProvider<Dictation> provider = getServer().getServicesManager().getRegistration(Dictation.class);
+        if(provider == null) return false;
+        dictation = provider.getProvider();
+        return true;
     }
 }

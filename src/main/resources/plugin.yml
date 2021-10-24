@@ -4,6 +4,7 @@ author: TheDarkSword
 main: it.thedarksword.bedwarspractice.BedwarsPractice
 description: Just a BedwarsPractice Plugin
 softdepend: [Multiverse-Core]
+#depend: [Dictation]
 
 commands:
   bedwarspractice:
@@ -15,3 +16,5 @@ commands:
     description: Get the TopList
   reset:
     description: Reset all Records
+  leave:
+    description: Run away from this minigame

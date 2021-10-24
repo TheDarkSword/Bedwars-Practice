@@ -24,7 +24,7 @@ public class KnockBackClutchDifficultyInventory extends BaseInventory {
             Player player = (Player) event.getWhoClicked();
             bedwarsPractice.getManager().session(player).ifPresent(session -> {
                 if(session instanceof KnockbackClutch) {
-                    bedwarsPractice.getManager().newSession(player, new EasyKnockbackClutch(bedwarsPractice, player, ((KnockbackClutch) session).isCheckPointEnabled()));
+                    bedwarsPractice.getManager().newSession(player, new EasyKnockbackClutch(bedwarsPractice, player, ((KnockbackClutch) session).isCheckPointEnabled(), session.getPlaceableBlock()));
                 }
             });
             player.closeInventory();
@@ -34,7 +34,7 @@ public class KnockBackClutchDifficultyInventory extends BaseInventory {
             Player player = (Player) event.getWhoClicked();
             bedwarsPractice.getManager().session(player).ifPresent(session -> {
                 if(session instanceof KnockbackClutch) {
-                    bedwarsPractice.getManager().newSession(player, new MediumKnockbackClutch(bedwarsPractice, player, ((KnockbackClutch) session).isCheckPointEnabled()));
+                    bedwarsPractice.getManager().newSession(player, new MediumKnockbackClutch(bedwarsPractice, player, ((KnockbackClutch) session).isCheckPointEnabled(), session.getPlaceableBlock()));
                 }
             });
             player.closeInventory();
@@ -44,7 +44,7 @@ public class KnockBackClutchDifficultyInventory extends BaseInventory {
             Player player = (Player) event.getWhoClicked();
             bedwarsPractice.getManager().session(player).ifPresent(session -> {
                 if(session instanceof KnockbackClutch) {
-                    bedwarsPractice.getManager().newSession(player, new HardKnockbackClutch(bedwarsPractice, player, ((KnockbackClutch) session).isCheckPointEnabled()));
+                    bedwarsPractice.getManager().newSession(player, new HardKnockbackClutch(bedwarsPractice, player, ((KnockbackClutch) session).isCheckPointEnabled(), session.getPlaceableBlock()));
                 }
             });
             player.closeInventory();

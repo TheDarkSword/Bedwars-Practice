@@ -23,24 +23,27 @@ public class ModeInventory {
     public ModeInventory() {
         inventory = Bukkit.createInventory(null, 36, "Modalità");
 
-        inventory.setItem(11, createItem(11, Material.BED, 1, ChatColor.GREEN + "Bridging", event -> {
+        inventory.setItem(10, createItem(10, Material.BED, 1, ChatColor.GREEN + "Bridging", event -> {
             Player player = (Player) event.getWhoClicked();
             player.performCommand("bwp start bridging");
         }));
 
-        inventory.setItem(13, createItem(13, Material.IRON_BLOCK, 1, ChatColor.GREEN + "Wall Clutch", event -> {
+        inventory.setItem(12, createItem(12, Material.IRON_BLOCK, 1, ChatColor.GREEN + "Wall Clutch", event -> {
             Player player = (Player) event.getWhoClicked();
             player.performCommand("bwp start wallclutch");
         }));
 
-        inventory.setItem(15, createItem(15, Material.WOOD_SWORD, 1, ChatColor.GREEN + "Knockback Clutch", event -> {
+        inventory.setItem(14, createItem(14, Material.WOOD_SWORD, 1, ChatColor.GREEN + "Knockback Clutch", event -> {
             Player player = (Player) event.getWhoClicked();
             player.performCommand("bwp start knockbackclutch");
         }));
 
-        inventory.setItem(31, createItem(31, Material.BARRIER, 1, ChatColor.RED + "Chiudi", event -> {
-            event.getWhoClicked().closeInventory();
+        inventory.setItem(16, createItem(16, Material.TNT, 1, ChatColor.GREEN + "Launch", event -> {
+            Player player = (Player) event.getWhoClicked();
+            player.performCommand("bwp start launch");
         }));
+
+        inventory.setItem(31, createItem(31, Material.BARRIER, 1, ChatColor.RED + "Chiudi", event -> event.getWhoClicked().closeInventory()));
     }
 
     protected ItemStack createItem(int slot, Material material, int amount, String name, Consumer<InventoryClickEvent> consumer) {

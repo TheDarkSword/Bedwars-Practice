@@ -28,6 +28,7 @@ public class BedwarsPracticeCommand implements CommandExecutor, TabCompleter {
         Module.registerModule(new Stop(bedwarsPractice));
         Module.registerModule(new Players(bedwarsPractice));
         Module.registerModule(new Top(bedwarsPractice));
+        Module.registerModule(new Blocks(bedwarsPractice));
     }
 
     @Override

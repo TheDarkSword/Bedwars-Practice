@@ -9,7 +9,13 @@ public enum SessionType {
 
     BRIDGING("BRIDGING"),
     WALL_CLUTCH("WALL CLUTCH"),
-    KB_CLUTCH("KB CLUTCH");
+    KB_CLUTCH("KB CLUTCH"),
+    LAUNCH("LAUNCH");
 
     final String name;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

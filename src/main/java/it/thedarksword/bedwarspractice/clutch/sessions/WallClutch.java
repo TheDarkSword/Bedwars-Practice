@@ -5,6 +5,7 @@ import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.SessionType;
 import it.thedarksword.bedwarspractice.abstraction.sessions.clutch.ClutchSession;
 import it.thedarksword.bedwarspractice.clipboards.Cuboid;
+import it.thedarksword.bedwarspractice.manager.ConstantObjects;
 import it.thedarksword.bedwarspractice.utils.Title;
 import it.thedarksword.bedwarspractice.utils.formatter.Format;
 import it.thedarksword.bedwarspractice.utils.location.FakeBlock;
@@ -31,8 +32,8 @@ public class WallClutch extends ClutchSession implements Comparable<WallClutch> 
 
     protected final Map<FakeBlock, Long> fakeBlocks = new ConcurrentHashMap<>();
 
-    public WallClutch(BedwarsPractice bedwarsPractice, Player player) {
-        super(SessionType.WALL_CLUTCH, bedwarsPractice, player);
+    public WallClutch(BedwarsPractice bedwarsPractice, Player player, ConstantObjects.PlaceableBlock placeableBlock) {
+        super(SessionType.WALL_CLUTCH, bedwarsPractice, player, placeableBlock);
         setFinishArea(new Cuboid(bedwarsPractice.getSpawns().getWallClutch().getFinish1(),
                 bedwarsPractice.getSpawns().getWallClutch().getFinish2()));
     }
@@ -130,8 +131,8 @@ public class WallClutch extends ClutchSession implements Comparable<WallClutch> 
         fakeBlocks.forEach((fakeBlock, placed) -> player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));
         fakeBlocks.clear();
 
-        player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
     }
 
     @SuppressWarnings("deprecation")
@@ -146,8 +147,8 @@ public class WallClutch extends ClutchSession implements Comparable<WallClutch> 
         fakeBlocks.forEach((fakeBlock, placed) -> player.sendBlockChange(fakeBlock.toBukkitLocation(), 0, (byte) 0));
         fakeBlocks.clear();
 
-        player.getInventory().setItem(0, bedwarsPractice.getConstantObjects().getBlock());
-        player.getInventory().setItem(2, bedwarsPractice.getConstantObjects().getBlock());
+        player.getInventory().setItem(0, getPlaceableBlock().get());
+        player.getInventory().setItem(2, getPlaceableBlock().get());
 
         PacketPlayOutNamedSoundEffect soundEffect = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(Sound.STEP_WOOL),
                 player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 1, 1);

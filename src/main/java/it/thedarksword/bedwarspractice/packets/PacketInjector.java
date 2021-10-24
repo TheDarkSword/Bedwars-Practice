@@ -62,7 +62,7 @@ public abstract class PacketInjector {
      * @param sender - the player that sent the packet, NULL for early login/status packets.
      * @param channel - channel that received the packet. Never NULL.
      * @param packet - the packet being received.
-     * @return The packet to recieve instead, or NULL to cancel.
+     * @return The packet to receive instead, or NULL to cancel.
      */
     public Object onPacketInAsync(Player sender, Channel channel, Object packet) {
         return packet;

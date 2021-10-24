@@ -6,6 +6,7 @@ import it.thedarksword.bedwarspractice.abstraction.sessions.SessionType;
 import it.thedarksword.bedwarspractice.abstraction.sessions.clutch.ClutchSession;
 import it.thedarksword.bedwarspractice.abstraction.sessions.clutch.KnockBackClutchConfiguration;
 import it.thedarksword.bedwarspractice.clipboards.Cuboid;
+import it.thedarksword.bedwarspractice.manager.ConstantObjects;
 import it.thedarksword.bedwarspractice.utils.formatter.Format;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,8 +26,8 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
 
     private final KnockBackClutchConfiguration configuration;
 
-    public KnockbackClutch(BedwarsPractice bedwarsPractice, Player player, KnockBackClutchConfiguration configuration, boolean checkpointEnabled) {
-        super(SessionType.KB_CLUTCH, bedwarsPractice, player);
+    public KnockbackClutch(BedwarsPractice bedwarsPractice, Player player, KnockBackClutchConfiguration configuration, boolean checkpointEnabled, ConstantObjects.PlaceableBlock placeableBlock) {
+        super(SessionType.KB_CLUTCH, bedwarsPractice, player, placeableBlock);
         this.configuration = configuration;
         setFinishArea(new Cuboid(bedwarsPractice.getSpawns().getKnockbackClutch().getFinish1(),
                 bedwarsPractice.getSpawns().getKnockbackClutch().getFinish2()));
@@ -34,8 +35,8 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
         super.checkPointEnabled = checkpointEnabled;
     }
 
-    public KnockbackClutch(BedwarsPractice bedwarsPractice, Player player, KnockBackClutchConfiguration configuration) {
-        this(bedwarsPractice, player, configuration, false);
+    public KnockbackClutch(BedwarsPractice bedwarsPractice, Player player, KnockBackClutchConfiguration configuration, ConstantObjects.PlaceableBlock placeableBlock) {
+        this(bedwarsPractice, player, configuration, false, placeableBlock);
     }
 
     @Override

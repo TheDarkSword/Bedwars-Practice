@@ -63,7 +63,7 @@ public class MySQLManager {
         }
     }
 
-    public void saveRecord(String username, String name, float time) throws SQLException {
+    public void saveRecord(String username, String name, double time) throws SQLException {
         if(mySQL.rowExists("name", name, configValue.TABLE_TYPES)) {
             int player_id = mySQL.getInteger("username", username, "id", configValue.TABLE_PLAYERS);
             int type_id = mySQL.getInteger("name", name, "id", configValue.TABLE_TYPES);
@@ -78,6 +78,17 @@ public class MySQLManager {
     }
 
     public float getBestTime(String username, String name) throws SQLException {
+        if(mySQL.rowExists("name", name, configValue.TABLE_TYPES)) {
+            int player_id = mySQL.getInteger("username", username, "id", configValue.TABLE_PLAYERS);
+            int type_id = mySQL.getInteger("name", name, "id", configValue.TABLE_TYPES);
+            if(mySQL.rowExists(new String[]{"player_id", "type_id"}, new Object[]{player_id, type_id}, configValue.TABLE_RECORDS)) {
+                return mySQL.getFloat(new String[]{"player_id", "type_id"}, new Object[]{player_id, type_id}, "time", configValue.TABLE_RECORDS);
+            }
+        }
+        return Float.MAX_VALUE;
+    }
+
+    public float getBestDistance(String username, String name) throws SQLException {
         if(mySQL.rowExists("name", name, configValue.TABLE_TYPES)) {
             int player_id = mySQL.getInteger("username", username, "id", configValue.TABLE_PLAYERS);
             int type_id = mySQL.getInteger("name", name, "id", configValue.TABLE_TYPES);

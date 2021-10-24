@@ -8,19 +8,15 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class Stop extends Module {
+public class Blocks extends Module {
 
-    public Stop(BedwarsPractice bedwarsPractice) {
-        super(bedwarsPractice, "stop", "bwp.stop");
+    public Blocks(BedwarsPractice bedwarsPractice) {
+        super(bedwarsPractice, "blocks", "bwp.blocks", "block", "blocchi");
     }
 
     @Override
     public void execute(Player player, String[] args) {
-        if(player.hasMetadata("session")) {
-            bedwarsPractice.getManager().endSession(player);
-            bedwarsPractice.getPacketListener().removePlayer(player);
-            player.removeMetadata("session", bedwarsPractice);
-        }
+        bedwarsPractice.getInventories().getBlocksInventory().open(player);
     }
 
     @Override

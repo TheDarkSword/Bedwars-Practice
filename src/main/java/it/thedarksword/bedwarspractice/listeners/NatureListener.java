@@ -4,6 +4,7 @@ import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.Session;
 import it.thedarksword.bedwarspractice.abstraction.sessions.bridging.BridgingSession;
 import it.thedarksword.bedwarspractice.abstraction.sessions.clutch.ClutchSession;
+import it.thedarksword.bedwarspractice.abstraction.sessions.launch.LaunchSession;
 import it.thedarksword.bedwarspractice.bridging.sessions.straight.none.ShortStraightBridging;
 import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
 import it.thedarksword.bedwarspractice.inventories.BaseInventory;
@@ -52,6 +53,8 @@ public class NatureListener implements Listener {
             Session session = optional.get();
             if(handType == bedwarsPractice.getConfigValue().SETTINGS_MATERIAL && session instanceof BridgingSession) {
                 ((BridgingSession)optional.get()).getSettingsInventory().open(player);
+            } else if(handType == bedwarsPractice.getConfigValue().LAUNCH_SETTINGS_MATERIAL && session instanceof LaunchSession) {
+                bedwarsPractice.getInventories().getLaunchSettings().open(player);
             } else if(handType == bedwarsPractice.getConfigValue().MODE_MATERIAL) {
                 bedwarsPractice.getInventories().getModeInventory().open(player);
             } else if (handType == bedwarsPractice.getConfigValue().KBC_DIFFICULTY_MATERIAL && session instanceof KnockbackClutch) {
@@ -70,6 +73,9 @@ public class NatureListener implements Listener {
                         clutchSession.setCheckPointEnabled(true);
                     }
                 }
+            } else if(hand.getType() == Material.BED) {
+                bedwarsPractice.getDictation().getPlayerManager().sendToServer(player.getName(), "BWLobby");
+                event.setCancelled(true);
             }
         }
     }
@@ -94,6 +100,16 @@ public class NatureListener implements Listener {
                 }));
             } else if(event.getInventory().equals(bedwarsPractice.getInventories().getKnockBackClutchDifficultyInventory().getInventory())) {
                 bedwarsPractice.getInventories().getKnockBackClutchDifficultyInventory().getItems().computeIfPresent(event.getSlot(), (((integer, clickableItem) -> {
+                    clickableItem.run(event);
+                    return clickableItem;
+                })));
+            } else if(event.getInventory().equals(bedwarsPractice.getInventories().getBlocksInventory().getInventory())) {
+                bedwarsPractice.getInventories().getBlocksInventory().getItems().computeIfPresent(event.getSlot(), (((integer, clickableItem) -> {
+                    clickableItem.run(event);
+                    return clickableItem;
+                })));
+            } else if(event.getInventory().equals(bedwarsPractice.getInventories().getLaunchSettings().getInventory())) {
+                bedwarsPractice.getInventories().getLaunchSettings().getItems().computeIfPresent(event.getSlot(), (((integer, clickableItem) -> {
                     clickableItem.run(event);
                     return clickableItem;
                 })));
