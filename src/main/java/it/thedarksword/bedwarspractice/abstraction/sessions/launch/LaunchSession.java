@@ -34,7 +34,7 @@ public class LaunchSession extends Session {
 
     @Getter private long sessionStart;
     @Getter private boolean running;
-    @Getter private double bestDistance;
+    @Getter private int bestDistance;
 
     @Getter private ItemStack launchItem;
 
@@ -48,7 +48,7 @@ public class LaunchSession extends Session {
     @SneakyThrows
     @Override
     public void load(Player player) {
-        bestDistance = bedwarsPractice.getMySQLManager().getBestTime(player.getName(), getClass().getSimpleName(), 0f);
+        bestDistance = (int) bedwarsPractice.getMySQLManager().getBestTime(player.getName(), getClass().getSimpleName(), 0f);
 
         player.getInventory().setItem(0, launchItem);
     }
