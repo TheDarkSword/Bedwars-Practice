@@ -78,17 +78,10 @@ public class MySQLManager {
     }
 
     public float getBestTime(String username, String name) throws SQLException {
-        if(mySQL.rowExists("name", name, configValue.TABLE_TYPES)) {
-            int player_id = mySQL.getInteger("username", username, "id", configValue.TABLE_PLAYERS);
-            int type_id = mySQL.getInteger("name", name, "id", configValue.TABLE_TYPES);
-            if(mySQL.rowExists(new String[]{"player_id", "type_id"}, new Object[]{player_id, type_id}, configValue.TABLE_RECORDS)) {
-                return mySQL.getFloat(new String[]{"player_id", "type_id"}, new Object[]{player_id, type_id}, "time", configValue.TABLE_RECORDS);
-            }
-        }
-        return Float.MAX_VALUE;
+        return getBestTime(username, name, Float.MAX_VALUE);
     }
 
-    public float getBestDistance(String username, String name) throws SQLException {
+    public float getBestTime(String username, String name, float defaultValue) throws SQLException {
         if(mySQL.rowExists("name", name, configValue.TABLE_TYPES)) {
             int player_id = mySQL.getInteger("username", username, "id", configValue.TABLE_PLAYERS);
             int type_id = mySQL.getInteger("name", name, "id", configValue.TABLE_TYPES);
@@ -96,7 +89,7 @@ public class MySQLManager {
                 return mySQL.getFloat(new String[]{"player_id", "type_id"}, new Object[]{player_id, type_id}, "time", configValue.TABLE_RECORDS);
             }
         }
-        return Float.MAX_VALUE;
+        return defaultValue;
     }
 
     public List<String> getTypes() throws SQLException {

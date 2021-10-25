@@ -48,7 +48,7 @@ public class LaunchSession extends Session {
     @SneakyThrows
     @Override
     public void load(Player player) {
-        bestDistance = bedwarsPractice.getMySQLManager().getBestTime(player.getName(), getClass().getSimpleName());
+        bestDistance = bedwarsPractice.getMySQLManager().getBestTime(player.getName(), getClass().getSimpleName(), 0f);
 
         player.getInventory().setItem(0, launchItem);
     }
@@ -204,7 +204,7 @@ public class LaunchSession extends Session {
             list.add("§bLanciati");
         }
         list.add("  ");
-        list.add("Miglior Distanza: §b" + (getBestDistance() == Float.MAX_VALUE ? "Nessuna" : getBestDistance()));
+        list.add("Miglior Distanza: §b" + (getBestDistance() == 0 ? "Nessuna" : getBestDistance()));
         list.add("   ");
         list.add("Modalità: §7" + getType().getName());
         list.add("    ");

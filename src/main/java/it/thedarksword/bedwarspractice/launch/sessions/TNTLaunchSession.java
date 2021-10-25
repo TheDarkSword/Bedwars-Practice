@@ -69,7 +69,6 @@ public class TNTLaunchSession extends LaunchSession implements Comparable<TNTLau
         bedwarsPractice.getTntLaunchTask().removeTask(this);
     }
 
-    @SneakyThrows
     @SuppressWarnings("deprecation")
     @Override
     public PacketPlayInBlockPlace handlePlace(Plugin plugin, Player player, PacketPlayInBlockPlace packet) {

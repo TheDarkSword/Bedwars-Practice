@@ -55,14 +55,16 @@ public class LaunchListener implements Listener {
 
         if(session.isRunning()) {
             if(player.getLocation().getX() >= bedwarsPractice.getConfigValue().LAUNCH_START_OFFSET + session.getSpawn().getX() &&
-                    player.getLocation().subtract(0, 1, 0).getBlock().getType() == Material.GOLD_BLOCK){
+                    (player.getLocation().subtract(0, 1, 0).getBlock().getType() == Material.GOLD_BLOCK ||
+                    player.getLocation().subtract(0, 0, 1).getBlock().getType() == Material.GOLD_BLOCK ||
+                    player.getLocation().add(0, 0, 2).getBlock().getType() == Material.GOLD_BLOCK)){
                 session.win(player);
                 session.stop(player);
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    /*@EventHandler(priority = EventPriority.LOWEST)
     public void onTNTDoDamage(EntityDamageByEntityEvent event) {
 
         if (event.getDamager().getType() == EntityType.PRIMED_TNT) {
@@ -88,9 +90,9 @@ public class LaunchListener implements Listener {
                 }
             }
         }
-    }
+    }*/
 
-    @EventHandler
+    /*@EventHandler
     public void onEntityDamageEvent(EntityDamageByEntityEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) return;
 
@@ -109,5 +111,5 @@ public class LaunchListener implements Listener {
                 bedwarsPractice.getServer().getScheduler().runTaskLater(bedwarsPractice, () -> event.getEntity().setVelocity(vector), 1);
             }
         }
-    }
+    }*/
 }
