@@ -10,6 +10,7 @@ import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
 import it.thedarksword.bedwarspractice.inventories.BaseInventory;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -73,7 +75,7 @@ public class NatureListener implements Listener {
                         clutchSession.setCheckPointEnabled(true);
                     }
                 }
-            } else if(hand.getType() == Material.BED) {
+            } else if(handType == Material.BED) {
                 bedwarsPractice.getDictation().getPlayerManager().sendToServer(player.getName(), "BWLobby");
                 event.setCancelled(true);
             }
@@ -128,6 +130,14 @@ public class NatureListener implements Listener {
                     clickableItem.run(event);
                     return clickableItem;
                 })));
+            } else if(event.getCurrentItem().getType() == Material.PAPER) {
+                net.minecraft.server.v1_8_R3.ItemStack nmsBack = CraftItemStack.asNMSCopy(event.getCurrentItem());
+                if(nmsBack.hasTag()) {
+                    NBTTagCompound compound = nmsBack.getTag();
+                    if(compound.hasKey("back")) {
+                        ((Player)event.getWhoClicked()).performCommand(compound.getString("back"));
+                    }
+                }
             }
         }
     }

@@ -2,11 +2,15 @@ package it.thedarksword.bedwarspractice.tasks;
 
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -21,38 +25,38 @@ public class TopUpdater extends BukkitRunnable {
 
     @Override
     public void run() {
-        update("ShortStraightBridging");
-        update("ShortUpStraightBridging");
-        update("ShortUpperStraightBridging");
+        update("ShortStraightBridging", "bwp top bridging");
+        update("ShortUpStraightBridging", "bwp top bridging");
+        update("ShortUpperStraightBridging", "bwp top bridging");
 
-        update("MediumStraightBridging");
-        update("MediumUpStraightBridging");
-        update("MediumUpperStraightBridging");
+        update("MediumStraightBridging", "bwp top bridging");
+        update("MediumUpStraightBridging", "bwp top bridging");
+        update("MediumUpperStraightBridging", "bwp top bridging");
 
-        update("LongStraightBridging");
-        update("LongUpStraightBridging");
-        update("LongUpperStraightBridging");
+        update("LongStraightBridging", "bwp top bridging");
+        update("LongUpStraightBridging", "bwp top bridging");
+        update("LongUpperStraightBridging", "bwp top bridging");
 
-        update("ShortDiagonalBridging");
-        update("ShortUpDiagonalBridging");
-        update("ShortUpperDiagonalBridging");
+        update("ShortDiagonalBridging", "bwp top bridging");
+        update("ShortUpDiagonalBridging", "bwp top bridging");
+        update("ShortUpperDiagonalBridging", "bwp top bridging");
 
-        update("MediumDiagonalBridging");
-        update("MediumUpDiagonalBridging");
-        update("MediumUpperDiagonalBridging");
+        update("MediumDiagonalBridging", "bwp top bridging");
+        update("MediumUpDiagonalBridging", "bwp top bridging");
+        update("MediumUpperDiagonalBridging", "bwp top bridging");
 
-        update("LongDiagonalBridging");
-        update("LongUpDiagonalBridging");
-        update("LongUpperDiagonalBridging");
+        update("LongDiagonalBridging", "bwp top bridging");
+        update("LongUpDiagonalBridging", "bwp top bridging");
+        update("LongUpperDiagonalBridging", "bwp top bridging");
 
-        update("EasyKnockbackClutch");
-        update("MediumKnockbackClutch");
-        update("HardKnockbackClutch");
+        update("EasyKnockbackClutch", "bwp top knockbackclutch");
+        update("MediumKnockbackClutch", "bwp top knockbackclutch");
+        update("HardKnockbackClutch", "bwp top knockbackclutch");
 
-        update("WallClutch");
+        update("WallClutch", "top");
     }
 
-    private void update(String mode) {
+    private void update(String mode, String backCommand) {
         try {
             List<Pair<String, Double>> list = bedwarsPractice.getMySQLManager().getTop(mode);
             Inventory inventory = bedwarsPractice.getServer().createInventory(null, 27, "Top " + mode);
@@ -67,6 +71,17 @@ public class TopUpdater extends BukkitRunnable {
                 skull.setItemMeta(meta);
                 inventory.setItem(i, skull);
             }
+
+            net.minecraft.server.v1_8_R3.ItemStack nmsBack = new net.minecraft.server.v1_8_R3.ItemStack(CraftMagicNumbers.getItem(Material.PAPER));
+            NBTTagCompound tag = nmsBack.hasTag() ? nmsBack.getTag() : new NBTTagCompound();
+            tag.setString("back", backCommand);
+            nmsBack.setTag(tag);
+
+            ItemStack back = CraftItemStack.asBukkitCopy(nmsBack);
+            ItemMeta meta = back.getItemMeta();
+            meta.setDisplayName(ChatColor.AQUA + "Indietro");
+            back.setItemMeta(meta);
+            inventory.setItem(26, back);
 
             bedwarsPractice.getInventories().getTopModality().put(mode, inventory);
         } catch (Exception e) {
