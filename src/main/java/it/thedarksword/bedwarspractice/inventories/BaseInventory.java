@@ -40,7 +40,7 @@ public abstract class BaseInventory {
 
     protected ItemStack createItem(int slot, Material material, int amount, String name, boolean glowing, Consumer<InventoryClickEvent> consumer,
                                    String... lore) {
-        return createItem(slot, material, amount, (byte) 0, name, false, consumer, lore);
+        return createItem(slot, material, amount, (byte) 0, name, glowing, consumer, lore);
     }
 
     protected ItemStack createItem(int slot, Material material, int amount, byte data, String name, boolean glowing, Consumer<InventoryClickEvent> consumer,
