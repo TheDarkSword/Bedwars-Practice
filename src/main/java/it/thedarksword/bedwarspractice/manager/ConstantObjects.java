@@ -2,9 +2,12 @@ package it.thedarksword.bedwarspractice.manager;
 
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import lombok.Getter;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Wool;
@@ -26,6 +29,7 @@ public class ConstantObjects {
 
     private final ItemStack launchItemSettings;
 
+    private final BedBurrow bedBurrow;
     @SuppressWarnings("deprecation")
     public ConstantObjects(BedwarsPractice bedwarsPractice) {
         this.bedwarsPractice = bedwarsPractice;
@@ -78,6 +82,8 @@ public class ConstantObjects {
         meta.setDisplayName(bedwarsPractice.getConfigValue().LAUNCH_SETTINGS_NAME);
         meta.setLore(bedwarsPractice.getConfigValue().LAUNCH_SETTINGS_LORE);
         launchItemSettings.setItemMeta(meta);
+
+        bedBurrow = new BedBurrow();
     }
 
     @SuppressWarnings("deprecation")
@@ -108,6 +114,46 @@ public class ConstantObjects {
 
         public ItemStack get() {
             return placeableBlock;
+        }
+    }
+
+    @Getter
+    public static class BedBurrow {
+        private final ItemStack sword;
+        private final ItemStack pickaxe;
+        private final ItemStack axe;
+        private final ItemStack shears;
+        private final ItemStack anvil;
+
+        public BedBurrow() {
+            net.minecraft.server.v1_8_R3.ItemStack sword = new net.minecraft.server.v1_8_R3.ItemStack(CraftMagicNumbers.getItem(Material.WOOD_SWORD));
+            NBTTagCompound swordCompound = sword.hasTag() ? sword.getTag() : new NBTTagCompound();
+            swordCompound.setBoolean("Unbreakable", true);
+            sword.setTag(swordCompound);
+            this.sword = CraftItemStack.asBukkitCopy(sword);
+
+            net.minecraft.server.v1_8_R3.ItemStack pickaxe = new net.minecraft.server.v1_8_R3.ItemStack(CraftMagicNumbers.getItem(Material.WOOD_PICKAXE));
+            NBTTagCompound pickaxeCompound = pickaxe.hasTag() ? pickaxe.getTag() : new NBTTagCompound();
+            pickaxeCompound.setBoolean("Unbreakable", true);
+            pickaxe.setTag(pickaxeCompound);
+            this.pickaxe = CraftItemStack.asBukkitCopy(pickaxe);
+
+            net.minecraft.server.v1_8_R3.ItemStack axe = new net.minecraft.server.v1_8_R3.ItemStack(CraftMagicNumbers.getItem(Material.WOOD_AXE));
+            NBTTagCompound axeCompound = axe.hasTag() ? axe.getTag() : new NBTTagCompound();
+            axeCompound.setBoolean("Unbreakable", true);
+            axe.setTag(axeCompound);
+            this.axe = CraftItemStack.asBukkitCopy(axe);
+
+            net.minecraft.server.v1_8_R3.ItemStack shears = new net.minecraft.server.v1_8_R3.ItemStack(CraftMagicNumbers.getItem(Material.SHEARS));
+            NBTTagCompound shearsCompound = shears.hasTag() ? shears.getTag() : new NBTTagCompound();
+            shearsCompound.setBoolean("Unbreakable", true);
+            shears.setTag(shearsCompound);
+            this.shears = CraftItemStack.asBukkitCopy(shears);
+
+            anvil = new ItemStack(Material.ANVIL);
+            ItemMeta anvilMeta = anvil.getItemMeta();
+            anvilMeta.setDisplayName(ChatColor.RED + "Drop Down!");
+            anvil.setItemMeta(anvilMeta);
         }
     }
 }

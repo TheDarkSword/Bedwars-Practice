@@ -17,6 +17,7 @@ public class Spawns {
     private final KnockbackClutch knockbackClutch = new KnockbackClutch();
     private final WallClutch wallClutch = new WallClutch();
     private final Launch launch = new Launch();
+    private final BedBurrow bedBurrow = new BedBurrow();
 
     public Spawns(Configuration settings) {
         this.settings = settings;
@@ -112,6 +113,17 @@ public class Spawns {
             );
             launch.finish = Material.GOLD_BLOCK;
         }
+
+        if(!settings.getString("spawn.bedburrow.world").isEmpty()) {
+            bedBurrow.spawn = new Location(
+                    Bukkit.getWorld(settings.getString("spawn.bedburrow.world")),
+                    settings.getInt("spawn.bedburrow.x"),
+                    settings.getInt("spawn.bedburrow.y"),
+                    settings.getInt("spawn.bedburrow.z"),
+                    settings.getFloat("spawn.bedburrow.yaw"),
+                    settings.getFloat("spawn.bedburrow.pitch")
+            );
+        }
     }
 
 
@@ -153,6 +165,15 @@ public class Spawns {
                 settings.set("spawn.launch.z", location.getBlockZ());
                 settings.set("spawn.launch.yaw", location.getYaw());
                 settings.set("spawn.launch.pitch", location.getPitch());
+                break;
+            case "bedburrow":
+                bedBurrow.spawn = location;
+                settings.set("spawn.bedburrow.world", location.getWorld().getName());
+                settings.set("spawn.bedburrow.x", location.getBlockX());
+                settings.set("spawn.bedburrow.y", location.getBlockY());
+                settings.set("spawn.bedburrow.z", location.getBlockZ());
+                settings.set("spawn.bedburrow.yaw", location.getYaw());
+                settings.set("spawn.bedburrow.pitch", location.getPitch());
                 break;
             default:
                 return false;
@@ -229,5 +250,10 @@ public class Spawns {
     public static class Launch {
         private Location spawn;
         private Material finish;
+    }
+
+    @Data
+    public static class BedBurrow {
+        private Location spawn;
     }
 }

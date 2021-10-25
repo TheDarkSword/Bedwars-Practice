@@ -10,7 +10,8 @@ public enum SessionType {
     BRIDGING("BRIDGING"),
     WALL_CLUTCH("WALL CLUTCH"),
     KB_CLUTCH("KB CLUTCH"),
-    LAUNCH("LAUNCH");
+    LAUNCH("LAUNCH"),
+    BED_BURROW("BED BURROW");
 
     final String name;
 

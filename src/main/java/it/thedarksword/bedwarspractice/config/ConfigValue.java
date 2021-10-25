@@ -100,6 +100,14 @@ public class ConfigValue {
     public final String LAUNCH_WIN_MESSAGE;
     public final String LAUNCH_LOOSE_MESSAGE;
 
+    //BedBurrow
+    public final String BEDBURROW_WIN_TITLE;
+    public final int BEDBURROW_fadeIn;
+    public final int BEDBURROW_duration;
+    public final int BEDBURROW_fadeOut;
+    public final String BEDBURROW_WIN_MESSAGE;
+    public final String BEDBURROW_LOOSE_MESSAGE;
+
     public ConfigValue(Configuration configuration) {
         this.configuration = configuration;
 
@@ -180,6 +188,13 @@ public class ConfigValue {
         LAUNCH_fadeOut = configuration.getInt("launch.win.title.fadeOut");
         LAUNCH_WIN_MESSAGE = getTranslated(configuration.getString("launch.win.message"));
         LAUNCH_LOOSE_MESSAGE = getTranslated(configuration.getString("launch.loose.message"));
+
+        BEDBURROW_WIN_TITLE = getTranslated(configuration.getString("bedburrow.win.title.message"));
+        BEDBURROW_fadeIn = configuration.getInt("bedburrow.win.title.fadeIn");
+        BEDBURROW_duration = configuration.getInt("bedburrow.win.title.duration");
+        BEDBURROW_fadeOut = configuration.getInt("bedburrow.win.title.fadeOut");
+        BEDBURROW_WIN_MESSAGE = getTranslated(configuration.getString("bedburrow.win.message"));
+        BEDBURROW_LOOSE_MESSAGE = getTranslated(configuration.getString("bedburrow.loose.message"));
     }
 
     private String getTranslated(String string) {
