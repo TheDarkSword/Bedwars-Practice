@@ -22,6 +22,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -190,8 +191,8 @@ public class WallClutch extends ClutchSession implements Comparable<WallClutch> 
     }
 
     @Override
-    public int compareTo(WallClutch o) {
-        return getPlayer().getName().compareTo(o.getPlayer().getName());
+    public int compareTo(@NotNull WallClutch o) {
+        return Integer.compare(player.getEntityId(), o.getPlayer().getEntityId());
     }
 
     public static class WallClutchTask extends BukkitRunnable {

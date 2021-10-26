@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -129,8 +130,8 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
     }
 
     @Override
-    public int compareTo(KnockbackClutch o) {
-        return getPlayer().getName().compareTo(o.getPlayer().getName());
+    public int compareTo(@NotNull KnockbackClutch o) {
+        return Integer.compare(player.getEntityId(), o.getPlayer().getEntityId());
     }
 
     public static class KnockbackClutchTask extends BukkitRunnable {

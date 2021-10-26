@@ -182,7 +182,7 @@ public class TNTLaunchSession extends LaunchSession implements Comparable<TNTLau
 
     @Override
     public int compareTo(@NotNull TNTLaunchSession o) {
-        return getPlayer().getName().compareTo(o.getPlayer().getName());
+        return Integer.compare(player.getEntityId(), o.getPlayer().getEntityId());
     }
 
     public static class TNTLaunchTask extends BukkitRunnable {
