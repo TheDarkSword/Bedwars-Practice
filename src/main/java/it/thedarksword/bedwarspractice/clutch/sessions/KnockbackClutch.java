@@ -16,7 +16,6 @@ import org.bukkit.util.Vector;
 
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -126,7 +125,7 @@ public class KnockbackClutch extends ClutchSession implements Comparable<Knockba
 
     @Override
     public int hashCode() {
-        return Objects.hash(player.getName(), player.getEntityId());
+        return player.getEntityId();
     }
 
     @Override

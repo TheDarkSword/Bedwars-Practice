@@ -4,9 +4,7 @@ import io.netty.util.internal.ConcurrentSet;
 import it.thedarksword.bedwarspractice.BedwarsPractice;
 import it.thedarksword.bedwarspractice.abstraction.sessions.SessionType;
 import it.thedarksword.bedwarspractice.abstraction.sessions.launch.LaunchSession;
-import it.thedarksword.bedwarspractice.clutch.sessions.KnockbackClutch;
 import it.thedarksword.bedwarspractice.utils.location.FakeBlock;
-import lombok.SneakyThrows;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,16 +12,12 @@ import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
-import java.util.Objects;
 import java.util.Set;
 
 public class TNTLaunchSession extends LaunchSession implements Comparable<TNTLaunchSession> {
@@ -36,7 +30,7 @@ public class TNTLaunchSession extends LaunchSession implements Comparable<TNTLau
         super(SessionType.LAUNCH, bedwarsPractice, player, Material.TNT);
     }
 
-    private void tick() {
+    private boolean tick() {
         if(System.currentTimeMillis() - lastTNT >= 2250) {
             Vector vector = player.getLocation().add(0.0, 1.0, 0.0).toVector().subtract(tntLocation.toVector());
             double l = vector.length();
@@ -54,7 +48,9 @@ public class TNTLaunchSession extends LaunchSession implements Comparable<TNTLau
             playerConnection.sendPacket(soundEffect);
 
             lastTNT = Long.MAX_VALUE;
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -67,6 +63,12 @@ public class TNTLaunchSession extends LaunchSession implements Comparable<TNTLau
     public void stop(Player player) {
         super.stop(player);
         bedwarsPractice.getTntLaunchTask().removeTask(this);
+    }
+
+    @Override
+    public void loose(Player player) {
+        super.loose(player);
+        if(tntId != 0) ((CraftPlayer)player).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(tntId));
     }
 
     @SuppressWarnings("deprecation")
@@ -175,7 +177,7 @@ public class TNTLaunchSession extends LaunchSession implements Comparable<TNTLau
 
     @Override
     public int hashCode() {
-        return Objects.hash(player.getName(), player.getEntityId());
+        return player.getEntityId();
     }
 
     @Override
@@ -188,7 +190,7 @@ public class TNTLaunchSession extends LaunchSession implements Comparable<TNTLau
 
         @Override
         public void run() {
-            tntLaunchSessions.forEach(TNTLaunchSession::tick);
+            tntLaunchSessions.removeIf(TNTLaunchSession::tick);
         }
 
         public void addTask(TNTLaunchSession tntLaunchSession) {

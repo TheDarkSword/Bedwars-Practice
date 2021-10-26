@@ -24,7 +24,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -187,7 +186,7 @@ public class WallClutch extends ClutchSession implements Comparable<WallClutch> 
 
     @Override
     public int hashCode() {
-        return Objects.hash(player.getName(), player.getEntityId());
+        return player.getEntityId();
     }
 
     @Override
