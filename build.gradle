@@ -28,15 +28,15 @@ repositories {
 
 dependencies {
     compileOnly 'org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT'
-    compileOnly 'io.netty:netty-all:4.1.67.Final'
+    compileOnly 'io.netty:netty-all:4.1.69.Final'
     compileOnly 'it.ytnoos.dictation:api:3.0'
 
     // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
     compile group: 'com.zaxxer', name: 'HikariCP', version: '4.0.3'
 
 
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
 
